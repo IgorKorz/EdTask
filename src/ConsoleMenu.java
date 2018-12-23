@@ -85,8 +85,7 @@ public class ConsoleMenu implements Menu {
     try {
       String value = dictionary.remove(key);
 
-      if (value == null) System.out.println("Key is not contains");
-      else System.out.println(key + "=" + value + " removed");
+      System.out.println(key + "=" + value + " removed");
     } catch (DictionaryException e) {
       System.out.println(e.getMessage());
     }
