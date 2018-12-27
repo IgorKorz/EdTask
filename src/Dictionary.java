@@ -70,6 +70,7 @@ public class Dictionary {
   }
 
   public String put(String key, String value) {
+    dictionary.put(key, value);
     result.resultForPut(key, value);
 
     return result.getResult();
