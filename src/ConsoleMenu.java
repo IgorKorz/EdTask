@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Map;
 
 public class ConsoleMenu implements Menu {
   private Dictionary[] dictionaries;
@@ -8,113 +9,113 @@ public class ConsoleMenu implements Menu {
     dictionaries = dictionary;
   }
 
-  @Override
   public void run() {
     try (Scanner scanner = new Scanner(System.in)) {
       while (true) {
-        clearConsole();
+        int index = -1;
+        boolean loopFlag = true;
 
-        Dictionary currentDictionary;
+        while (loopFlag) {
+          clearConsole();
 
-        System.out.println("Select dictionary:");
-        printDictionarysList();
-        System.out.println("exit-Exit");
+          System.out.println("Select dictionary:");
+          printDictionarysList();
+          System.out.println("exit-Exit");
 
-        String choice = scanner.nextLine();
+          if (scanner.hasNextInt()) {
+            index = scanner.nextInt();
 
-        if (choice.equals("exit")) break;
-
-        try {
-          int index = Integer.parseInt(choice);
-          currentDictionary = dictionaries[index];
-          String command = "";
-
-          while (!command.equals("exit")) {
-            clearConsole();
-            System.out.println("Select command:");
-            System.out.println("1-Print");
-            System.out.println("2-Remove");
-            System.out.println("3-Get");
-            System.out.println("4-Put");
-            System.out.println("exit-Exit");
-
-            command = scanner.nextLine();
-
-            switch(command) {
-              case "1": printDictionary(currentDictionary); break;
-
-              case "2": {
-                System.out.println("Enter key:");
-                String key = scanner.nextLine();
-                removeValue(currentDictionary, key);
-
-                break;
-              }
-
-              case "3": {
-                System.out.println("Enter key:");
-                String key = scanner.nextLine();
-                getValue(currentDictionary, key);
-
-                break;
-              }
-
-              case "4": {
-                System.out.println("Enter key:");
-                String key = scanner.nextLine();
-
-                System.out.println("Enter value:");
-                String value = scanner.nextLine();
-
-                break;
-              }
-            }
+            if (index < 0) System.out.println("Number can not be less than zero!");
+            else if (index > 0) System.out.println("Number can not be greater than count of dictionaries!");
+            else loopFlag = false;
+          } else {
+            interrupt = scanner.nextLine().equals("exit");
+            loopFlag = false;
           }
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-          System.out.println("Invalid number");
+
+          System.out.println("Press Enter");
+          scanner.nextLine();
+        }
+
+        if (interrupt) break;
+        
+        Dictionary currentDictionary = dictionaries[index];
+        String command = "";
+
+        while (!command.equals("exit")) {
+          clearConsole();
+          System.out.println("Select command:");
+          System.out.println("1-Print");
+          System.out.println("2-Remove");
+          System.out.println("3-Get");
+          System.out.println("4-Put");
+          System.out.println("exit-Exit");
+
+          command = scanner.nextLine();
+
+          switch(command) {
+            case "1": printDictionary(currentDictionary); break;
+
+            case "2": {
+              System.out.println("Enter key:");
+              String key = scanner.nextLine();
+              removeValue(currentDictionary, key);
+
+              break;
+            }
+
+            case "3": {
+              System.out.println("Enter key:");
+              String key = scanner.nextLine();
+              getValue(currentDictionary, key);
+
+              break;
+            }
+
+            case "4": {
+              System.out.println("Enter key:");
+              String key = scanner.nextLine();
+
+              System.out.println("Enter value:");
+              String value = scanner.nextLine();
+              putValue(currentDictionary, key, value);
+
+              break;
+            }
+
+            case "exit": break;
+
+            default: System.out.println("Invalid command!");
+          }
+
+          System.out.println("Press Enter");
+          scanner.nextLine();
         }
       }
     }
   }
 
   public void printDictionary(Dictionary dictionary) {
-    System.out.println(dictionary);
+    for (Map.Entry<String, String> entry : dictionary.getDictionary().entrySet()) {
+      System.out.println(entry.getKey() + "=" + entry.getValue());
+    }
   }
 
   public void removeValue(Dictionary dictionary, String key) {
-    try {
-      String value = dictionary.remove(key);
-
-      System.out.println(key + "=" + value + " removed");
-    } catch (DictionaryException e) {
-      System.out.println(e.getMessage());
-    }
+    System.out.println(dictionary.remove(key));
   }
 
   public void getValue(Dictionary dictionary, String key) {
-    try {
-      String value = dictionary.getValue(key);
-
-      System.out.println(key + "=" + value);
-    } catch (DictionaryException e) {
-      System.out.println(e.getMessage());
-    }
+    System.out.println(dictionary.getValue(key));
   }
 
   public void putValue(Dictionary dictionary, String key, String value) {
-    try {
-      String newValue = dictionary.put(key, value);
-
-      if (newValue == null) System.out.println("Value is not put");
-      else System.out.println(key + "=" + value + " put");
-    } catch (DictionaryException e) {
-      System.out.println(e.getMessage());
-    }
+    System.out.println(dictionary.put(key, value));
   }
 
   private void printDictionarysList() {
     for (int i = 0; i < dictionaries.length; i++) {
-      System.out.println(i + "-" + dictionaries[i].getClass().getSimpleName());
+      System.out.println(i + "-" + dictionaries[i].getName());
     }
   }
 

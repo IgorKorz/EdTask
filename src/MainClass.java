@@ -4,8 +4,8 @@ import java.io.IOException;
 public class MainClass {
   public static void main(String[] args) {
     try {
-      Dictionary wordDictionary = new WordDictionary(Paths.get("WordProperties.txt"));
-      Dictionary numDictionary = new NumberDictionary(Paths.get("NumberProperties.txt"));
+      Dictionary wordDictionary = new Dictionary(Paths.get("WordProperties.txt"), 4, '0', '9', "Word dictionary");
+      Dictionary numDictionary = new Dictionary(Paths.get("NumberProperties.txt"), 5, 'a', 'z', "Number dictionary");
       Menu consoleMenu = new ConsoleMenu(wordDictionary, numDictionary);
       consoleMenu.run();
     } catch (IOException e) {
