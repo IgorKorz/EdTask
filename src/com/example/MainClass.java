@@ -1,7 +1,9 @@
+package com.example;
+
+import com.example.view.Menu;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-
-import view.Menu;
 
 public class MainClass {
   public static void main(String[] args) {

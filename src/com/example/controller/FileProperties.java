@@ -1,9 +1,6 @@
-package controller;
+package com.example.controller;
 
-import model.Checker;
-import model.DictionaryChecker;
-import model.DictionaryResult;
-import model.Result;
+import com.example.model.*;
 
 import java.nio.file.Path;
 import java.nio.file.Files;

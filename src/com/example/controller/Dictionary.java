@@ -1,4 +1,4 @@
-package controller;
+package com.example.controller;
 
 import java.util.Map;
 

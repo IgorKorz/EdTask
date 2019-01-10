@@ -1,6 +1,6 @@
-package model;
+package com.example.model;
 
-import controller.Dictionary;
+import com.example.controller.Dictionary;
 
 import java.io.IOException;
 import java.nio.file.Files;

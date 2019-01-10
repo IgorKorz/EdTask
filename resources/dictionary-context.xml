@@ -4,14 +4,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="wordDictionary" class="controller.FileProperties">
+    <bean id="wordDictionary" class="com.example.controller.FileProperties">
         <constructor-arg index="0" value="resources\\WordProperties.txt"/>
         <constructor-arg index="1" value="4"/>
         <constructor-arg index="2" value="[a-z]{4}"/>
         <constructor-arg index="3" value="Word dictionary"/>
     </bean>
 
-    <bean id="numberDictionary" class="controller.FileProperties">
+    <bean id="numberDictionary" class="com.example.controller.FileProperties">
 
         <constructor-arg index="0" value="resources\\NumberProperties.txt"/>
         <constructor-arg index="1" value="5"/>
@@ -19,7 +19,7 @@
         <constructor-arg index="3" value="Number dictionary"/>
     </bean>
     
-    <bean id="menu" class="view.ConsoleMenu">
+    <bean id="menu" class="com.example.view.ConsoleMenu">
         <constructor-arg>
             <list>
                 <ref bean="wordDictionary"/>

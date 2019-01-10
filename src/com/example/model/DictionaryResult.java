@@ -1,6 +1,6 @@
-package model;
+package com.example.model;
 
-import controller.Dictionary;
+import com.example.controller.Dictionary;
 
 public class DictionaryResult implements Result {
         private final String keyNotContainsMsg = "Key not contains!";
