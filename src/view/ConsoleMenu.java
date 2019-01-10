@@ -1,19 +1,17 @@
-package dictionary;
+package view;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import controller.Dictionary;
 
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 
-@Component
 public class ConsoleMenu implements Menu {
-  @Autowired
   private Dictionary[] dictionaries;
   private boolean interrupt = false;
 
-  public ConsoleMenu(Dictionary... dictionary) {
-    dictionaries = dictionary;
+  public ConsoleMenu(Dictionary... dictionaries) {
+    this.dictionaries = dictionaries;
   }
 
   public void run() {
@@ -25,8 +23,8 @@ public class ConsoleMenu implements Menu {
         while (loopFlag) {
           clearConsole();
 
-          System.out.println("Select dictionary:");
-          printDictionarysList();
+          System.out.println("Select controller:");
+          printDictionariesList();
           System.out.println("exit-Exit");
 
           if (scanner.hasNextInt()) {
@@ -46,7 +44,7 @@ public class ConsoleMenu implements Menu {
 
         if (interrupt) break;
         
-        Dictionary currentDictionary = dictionaries[index];
+        Dictionary currentFileProperties = dictionaries[index];
         String command = "";
 
         while (!command.equals("exit")) {
@@ -61,12 +59,12 @@ public class ConsoleMenu implements Menu {
           command = scanner.nextLine();
 
           switch(command) {
-            case "1": printDictionary(currentDictionary); break;
+            case "1": printDictionary(currentFileProperties); break;
 
             case "2": {
               System.out.println("Enter key:");
               String key = scanner.nextLine();
-              removeValue(currentDictionary, key);
+              removeValue(currentFileProperties, key);
 
               break;
             }
@@ -74,7 +72,7 @@ public class ConsoleMenu implements Menu {
             case "3": {
               System.out.println("Enter key:");
               String key = scanner.nextLine();
-              getValue(currentDictionary, key);
+              getValue(currentFileProperties, key);
 
               break;
             }
@@ -85,7 +83,7 @@ public class ConsoleMenu implements Menu {
 
               System.out.println("Enter value:");
               String value = scanner.nextLine();
-              putValue(currentDictionary, key, value);
+              putValue(currentFileProperties, key, value);
 
               break;
             }
@@ -95,6 +93,7 @@ public class ConsoleMenu implements Menu {
             default: System.out.println("Invalid command!");
           }
 
+          currentFileProperties.write();
           System.out.println("Press Enter");
           scanner.nextLine();
         }
@@ -102,25 +101,25 @@ public class ConsoleMenu implements Menu {
     }
   }
 
-  public void printDictionary(Dictionary dictionary) {
+  private void printDictionary(Dictionary dictionary) {
     for (Map.Entry<String, String> entry : dictionary.getDictionary().entrySet()) {
       System.out.println(entry.getKey() + "=" + entry.getValue());
     }
   }
 
-  public void removeValue(Dictionary dictionary, String key) {
+  private void removeValue(Dictionary dictionary, String key) {
     System.out.println(dictionary.remove(key));
   }
 
-  public void getValue(Dictionary dictionary, String key) {
-    System.out.println(dictionary.getValue(key));
+  private void getValue(Dictionary dictionary, String key) {
+    System.out.println(dictionary.get(key));
   }
 
-  public void putValue(Dictionary dictionary, String key, String value) {
+  private void putValue(Dictionary dictionary, String key, String value) {
     System.out.println(dictionary.put(key, value));
   }
 
-  private void printDictionarysList() {
+  private void printDictionariesList() {
     for (int i = 0; i < dictionaries.length; i++) {
       System.out.println(i + "-" + dictionaries[i].getName());
     }
