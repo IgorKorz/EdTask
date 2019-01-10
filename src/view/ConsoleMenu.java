@@ -2,7 +2,6 @@ package view;
 
 import controller.Dictionary;
 
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 

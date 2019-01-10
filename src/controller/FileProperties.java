@@ -1,6 +1,8 @@
 package controller;
 
 import model.Checker;
+import model.DictionaryChecker;
+import model.DictionaryResult;
 import model.Result;
 
 import java.nio.file.Path;
@@ -24,9 +26,10 @@ public class FileProperties implements Dictionary {
     if (keyLength <= 0) this.keyLength = 1;
     else this.keyLength = keyLength;
 
-    file = Checker.checkExistAndGetFile(filePath);
+    Checker checker = new DictionaryChecker(this);
+    file = checker.checkExistAndGetFile(filePath);
     dictionary = new LinkedHashMap<>();
-    result = new Result(this);
+    result = new DictionaryResult(this);
     this.keyRegex = keyRegex;
     this.name = name;
     List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
@@ -68,7 +71,7 @@ public class FileProperties implements Dictionary {
   @Override
   public String get(String key) {
     String value = dictionary.get(key);
-    result.resultForGetValue(key, value);
+    result.resultForGet(key, value);
 
     return result.getResult();
   }

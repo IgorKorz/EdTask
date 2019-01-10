@@ -19,4 +19,13 @@
         <constructor-arg index="3" value="Number dictionary"/>
     </bean>
     
+    <bean id="menu" class="view.ConsoleMenu">
+        <constructor-arg>
+            <list>
+                <ref bean="wordDictionary"/>
+                <ref bean="numberDictionary"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    
 </beans>

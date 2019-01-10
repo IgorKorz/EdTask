@@ -7,8 +7,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Checker {
-    public static Path checkExistAndGetFile(String filePath) {
+public class DictionaryChecker implements Checker {
+    private Dictionary dictionary;
+
+    public DictionaryChecker(Dictionary dictionary) {
+        this.dictionary = dictionary;
+    }
+
+    @Override
+    public Path checkExistAndGetFile(String filePath) {
         Path file = Paths.get(filePath);
 
         if (!Files.exists(file)) try {
@@ -20,7 +27,8 @@ public class Checker {
         return file;
     }
 
-    public static boolean isValidKey(Dictionary dictionary, String key) {
+    @Override
+    public boolean isValidKey(String key) {
         return key.length() == dictionary.getKeyLength() && key.matches(dictionary.getKeyRegex());
     }
 }
