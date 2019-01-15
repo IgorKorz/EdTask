@@ -15,7 +15,7 @@ public class FileProperties implements Dictionary {
   private final int keyLength;
   private final String keyRegex;
   private final String name;
-  private Result result;
+  private Checker checker;
   private Source<Path> file;
   private Map<String, String> dictionary;
 
@@ -23,17 +23,11 @@ public class FileProperties implements Dictionary {
     if (keyLength <= 0) this.keyLength = 1;
     else this.keyLength = keyLength;
 
-    Checker checker = new ValidChecker(this);
-    file = new FileSource(filePath);
-    dictionary = new LinkedHashMap<>();
     this.keyRegex = keyRegex;
     this.name = name;
-    List<String> lines = Files.readAllLines(file.getSource(), StandardCharsets.UTF_8);
-
-    for (String line : lines) {
-      String[] keyValue = line.split("=");
-      dictionary.put(keyValue[0], keyValue[1]);
-    }
+    this.checker = new ValidChecker(this);
+    this.file = new FileSource(filePath);
+    initDictionary();
   }
 
   @Override
@@ -58,34 +52,49 @@ public class FileProperties implements Dictionary {
 
   @Override
   public String remove(String key) {
-    String value = dictionary.remove(key);
-    result.resultForRemove(key, value);
+    if (checker.keyContains(key)) {
+      String value = dictionary.remove(key);
 
-    return result.getResult();
+      return checker.resultForRemove(key, value);
+    } else return checker.getResult();
   }
 
   @Override
   public String get(String key) {
-    String value = dictionary.get(key);
-    result.resultForGet(key, value);
+    if (checker.keyContains(key)) {
+      String value = dictionary.get(key);
 
-    return result.getResult();
+      return checker.resultForGet(key, value);
+    } else return checker.getResult();
   }
 
   @Override
   public String put(String key, String value) {
-    dictionary.put(key, value);
-    result.resultForPut(key, value);
+    if (checker.isValidKey(key)) {
+      dictionary.put(key, value);
 
-    return result.getResult();
+      return checker.resultForPut(key, value);
+    } else return checker.getResult();
   }
 
-  @Override
-  public void write() {
-    try (BufferedWriter fileWriter = Files.newBufferedWriter(file.getSource())) {
-      for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-        fileWriter.write(entry.getKey() + "=" + entry.getValue());
-        fileWriter.newLine();
+  private void writeToFile(List<String> lines) {
+    try (BufferedWriter bufferedWriter = Files.newBufferedWriter(file.getSource())) {
+      for (String line : lines)
+        bufferedWriter.write(line + "\n");
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+
+  private void initDictionary() {
+    dictionary = new LinkedHashMap<>();
+
+    try {
+      List<String> lines = Files.readAllLines(file.getSource(), StandardCharsets.UTF_8);
+
+      for (String line : lines) {
+        String[] keyValue = line.split("=");
+        dictionary.put(keyValue[0], keyValue[1]);
       }
     } catch (IOException e) {
       System.out.println(e.getMessage());

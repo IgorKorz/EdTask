@@ -2,9 +2,9 @@ package com.example.model;
 
 public interface Checker<T> {
     String getResult();
-    void resultForRemove(String key);
-    void resultForGet(String key);
-    void resultForPut(String key);
+    String resultForRemove(String key, String value);
+    String resultForGet(String key, String value);
+    String resultForPut(String key, String value);
     boolean isValidKey(String key);
     boolean keyContains(String key);
 }

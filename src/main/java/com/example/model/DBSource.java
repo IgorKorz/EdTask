@@ -13,7 +13,7 @@ public class DBSource implements Source<JdbcTemplate> {
                 .replace(' ', '_');
 
         jdbcTemplate.execute("create table if not exists " + tableName + "(" +
-                "id serial, property_key varchar(" + keyLength + "), property_value varchar ");
+                "id serial, property_key varchar(" + keyLength + "), property_value varchar(255))");
     }
 
     @Override

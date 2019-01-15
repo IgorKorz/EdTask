@@ -22,18 +22,18 @@ public class ValidChecker implements Checker<JdbcTemplate> {
     }
 
     @Override
-    public void resultForRemove(String key) {
-
+    public String resultForRemove(String key, String value) {
+        return result = key + "=" + value + " removed";
     }
 
     @Override
-    public void resultForGet(String key) {
-
+    public String resultForGet(String key, String value) {
+        return result = key + "=" + value;
     }
 
     @Override
-    public void resultForPut(String key) {
-
+    public String resultForPut(String key, String value) {
+        return result = key + "=" + value + " put";
     }
 
     @Override

@@ -16,5 +16,31 @@
           class="org.springframework.jdbc.core.JdbcTemplate">
         <constructor-arg ref="dataSource"/>
     </bean>
+
+    <bean id="wordProperties"
+          class="com.example.controller.DBProperties">
+        <constructor-arg index="0" ref="jdbcTemplate"/>
+        <constructor-arg index="1" value="4"/>
+        <constructor-arg index="2" value="[a-zA-Z]{4}"/>
+        <constructor-arg index="3" value="Word Properties"/>
+    </bean>
+
+    <bean id="numberProperties"
+          class="com.example.controller.DBProperties">
+        <constructor-arg index="0" ref="jdbcTemplate"/>
+        <constructor-arg index="1" value="5"/>
+        <constructor-arg index="2" value="[0-9]{5}"/>
+        <constructor-arg index="3" value="Number Properties"/>
+    </bean>
+
+    <bean id="menu"
+          class="com.example.view.ConsoleMenu">
+        <constructor-arg>
+            <list>
+                <ref bean="wordProperties"/>
+                <ref bean="numberProperties"/>
+            </list>
+        </constructor-arg>
+    </bean>
     
 </beans>

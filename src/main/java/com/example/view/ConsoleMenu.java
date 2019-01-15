@@ -92,7 +92,6 @@ public class ConsoleMenu implements Menu {
             default: System.out.println("Invalid command!");
           }
 
-          currentFileProperties.write();
           System.out.println("Press Enter");
           scanner.nextLine();
         }
