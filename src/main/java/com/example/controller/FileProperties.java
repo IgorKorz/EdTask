@@ -58,6 +58,8 @@ public class FileProperties implements Dictionary {
     if (checker.keyContains(key)) {
       String value = dictionary.remove(key);
 
+      writeToFile();
+
       return checker.resultForRemove(key, value);
     } else return checker.getResult();
   }
@@ -76,14 +78,16 @@ public class FileProperties implements Dictionary {
     if (checker.isValidKey(key)) {
       dictionary.put(key, value);
 
+      writeToFile();
+
       return checker.resultForPut(key, value);
     } else return checker.getResult();
   }
 
-  private void writeToFile(List<String> lines) {
+  private void writeToFile() {
     try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
-      for (String line : lines)
-        bufferedWriter.write(line + "\n");
+      for (Map.Entry<String, String> entry : dictionary.entrySet())
+        bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
     } catch (IOException e) {
       System.out.println(e);
     }
