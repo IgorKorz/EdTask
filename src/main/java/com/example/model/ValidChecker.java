@@ -2,9 +2,7 @@ package com.example.model;
 
 import com.example.controller.Dictionary;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
-public class ValidChecker implements Checker<JdbcTemplate> {
+public class ValidChecker implements Checker {
     private final String keyNotContainsMsg = "Key not contains!";
     private final String keyIsTooShortMsg = "Key is too short!";
     private final String keyIsTooLongMsg = "Key is too long!";

@@ -3,7 +3,6 @@ package com.example.controller;
 import com.example.model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -51,6 +50,10 @@ public abstract class DBProperties implements Dictionary {
     }
     //endregion
 
+    protected Session openSession() {
+        return dataSource.openSession();
+    }
+
     private void initDictionary() {
         dictionary = Collections.synchronizedMap(new LinkedHashMap<>());
         List<Property> properties = openSession().createQuery("from " + entityName).list();
@@ -59,9 +62,5 @@ public abstract class DBProperties implements Dictionary {
         for (Property property : properties) {
             dictionary.put(property.getKey(), property.getValue());
         }
-    }
-
-    protected Session openSession() {
-        return dataSource.openSession();
     }
 }

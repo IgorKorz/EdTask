@@ -1,6 +1,6 @@
 package com.example.model;
 
-public interface Checker<T> {
+public interface Checker {
     String getResult();
     String resultForRemove(String key, String value);
     String resultForGet(String key, String value);
