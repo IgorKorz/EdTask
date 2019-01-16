@@ -2,7 +2,6 @@ package view;
 
 import controller.Dictionary;
 
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 
@@ -93,7 +92,6 @@ public class ConsoleMenu implements Menu {
             default: System.out.println("Invalid command!");
           }
 
-          currentFileProperties.write();
           System.out.println("Press Enter");
           scanner.nextLine();
         }

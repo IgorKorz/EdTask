@@ -1,26 +1,10 @@
 package model;
 
-import controller.Dictionary;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-public class Checker {
-    public static Path checkExistAndGetFile(String filePath) {
-        Path file = Paths.get(filePath);
-
-        if (!Files.exists(file)) try {
-            file = Files.createFile(file);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-
-        return file;
-    }
-
-    public static boolean isValidKey(Dictionary dictionary, String key) {
-        return key.length() == dictionary.getKeyLength() && key.matches(dictionary.getKeyRegex());
-    }
+public interface Checker {
+    String getResult();
+    String resultForRemove(String key, String value);
+    String resultForGet(String key, String value);
+    String resultForPut(String key, String value);
+    boolean isValidKey(String key);
+    boolean keyContains(String key);
 }

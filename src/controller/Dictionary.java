@@ -11,5 +11,4 @@ public interface Dictionary {
     String remove(String key);
     String get(String key);
     String put(String key, String value);
-    void write();
 }

@@ -1,40 +1,34 @@
 package controller;
 
-import model.Checker;
-import model.Result;
+import model.*;
 
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FileProperties implements Dictionary {
   private final int keyLength;
   private final String keyRegex;
   private final String name;
+  private Checker checker;
+  private Path source;
   private Map<String, String> dictionary;
-  private Result result;
-  private Path file;
 
-  public FileProperties(String filePath, int keyLength, String keyRegex, String name) throws IOException {
+  public FileProperties(String filePath, int keyLength, String keyRegex, String name) {
     if (keyLength <= 0) this.keyLength = 1;
     else this.keyLength = keyLength;
 
-    file = Checker.checkExistAndGetFile(filePath);
-    dictionary = new LinkedHashMap<>();
-    result = new Result(this);
-    this.keyRegex = keyRegex;
+    this.keyRegex = keyRegex + "{" + keyLength + "}";
     this.name = name;
-    List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-
-    for (String line : lines) {
-      String[] keyValue = line.split("=");
-      dictionary.put(keyValue[0], keyValue[1]);
-    }
+    this.checker = new ValidChecker(this);
+    initSource(filePath);
+    initDictionary();
   }
 
   @Override
@@ -59,37 +53,66 @@ public class FileProperties implements Dictionary {
 
   @Override
   public String remove(String key) {
-    String value = dictionary.remove(key);
-    result.resultForRemove(key, value);
+    if (checker.keyContains(key)) {
+      String value = dictionary.remove(key);
 
-    return result.getResult();
+      writeToFile();
+
+      return checker.resultForRemove(key, value);
+    } else return checker.getResult();
   }
 
   @Override
   public String get(String key) {
-    String value = dictionary.get(key);
-    result.resultForGetValue(key, value);
+    if (checker.keyContains(key)) {
+      String value = dictionary.get(key);
 
-    return result.getResult();
+      return checker.resultForGet(key, value);
+    } else return checker.getResult();
   }
 
   @Override
   public String put(String key, String value) {
-    dictionary.put(key, value);
-    result.resultForPut(key, value);
+    if (checker.isValidKey(key)) {
+      dictionary.put(key, value);
 
-    return result.getResult();
+      writeToFile();
+
+      return checker.resultForPut(key, value);
+    } else return checker.getResult();
   }
 
-  @Override
-  public void write() {
-    try (BufferedWriter fileWriter = Files.newBufferedWriter(file)) {
-      for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-        fileWriter.write(entry.getKey() + "=" + entry.getValue());
-        fileWriter.newLine();
-      }
+  private void writeToFile() {
+    try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
+      for (Map.Entry<String, String> entry : dictionary.entrySet())
+        bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
     } catch (IOException e) {
       System.out.println(e);
+    }
+  }
+
+  private void initDictionary() {
+    dictionary = new LinkedHashMap<>();
+
+    try {
+      List<String> lines = Files.readAllLines(source, StandardCharsets.UTF_8);
+
+      for (String line : lines) {
+        String[] keyValue = line.split("=");
+        dictionary.put(keyValue[0], keyValue[1]);
+      }
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  private void initSource(String filePath) {
+    source = Paths.get(filePath);
+
+    if (!Files.exists(source)) try {
+      source = Files.createFile(source);
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
     }
   }
 }
