@@ -14,7 +14,7 @@ public class NumberProperty implements Property {
 
     @Size(min = 5, max = 5, message = "Key length must be strictly 5 symbols!")
     @Pattern(regexp = "[0-9]{5}", message = "Key must contain only numbers!")
-    @Column(name = "property_key", nullable = false, unique = true)
+    @Column(name = "property_key", nullable = false)
     private String key;
 
     @Column(name = "property_value")
@@ -50,3 +50,4 @@ public class NumberProperty implements Property {
         this.value = value;
     }
 }
+

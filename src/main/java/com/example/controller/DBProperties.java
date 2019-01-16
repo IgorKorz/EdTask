@@ -4,16 +4,13 @@ import com.example.model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class DBProperties implements Dictionary {
     protected String entityName;
     protected Checker checker;
     protected SessionFactory dataSource;
-    protected Map<String, String> dictionary;
+    protected Map<String, List<String>> dictionary;
     private int keyLength;
     private String keyRegex;
     private String name;
@@ -31,7 +28,15 @@ public abstract class DBProperties implements Dictionary {
     //region override
     @Override
     public synchronized Map<String, String> getDictionary() {
-        return new LinkedHashMap<>(dictionary);
+        Map<String, String> keyWithValues = new LinkedHashMap<>();
+
+        for (Map.Entry<String, List<String>> entry : dictionary.entrySet()) {
+            String key = entry.getKey();
+
+            keyWithValues.put(key, values(key));
+        }
+
+        return keyWithValues;
     }
 
     @Override
@@ -54,13 +59,32 @@ public abstract class DBProperties implements Dictionary {
         return dataSource.openSession();
     }
 
+    protected String values(String key) {
+        List<String> valueList = dictionary.get(key);
+        String values = "";
+
+        for (String value : valueList) {
+            values += value + ";";
+        }
+
+        return values;
+    }
+
     private void initDictionary() {
         dictionary = Collections.synchronizedMap(new LinkedHashMap<>());
         List<Property> properties = openSession().createQuery("from " + entityName).list();
         openSession().close();
 
         for (Property property : properties) {
-            dictionary.put(property.getKey(), property.getValue());
+            String key = property.getKey();
+            String value = property.getValue();
+
+            if (dictionary.containsKey(property.getKey())) {
+                dictionary.get(key).add(value);
+            } else {
+                dictionary.put(key, new LinkedList<>());
+                dictionary.get(key).add(value);
+            }
         }
     }
 }

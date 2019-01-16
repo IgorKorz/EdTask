@@ -16,7 +16,7 @@ public class WordProperty implements Property {
     @NotNull
     @Size(min = 4, max = 4, message = "Key length must be strictly 4 symbols!")
     @Pattern(regexp = "[a-zA-Z]{4}", message = "Key must contain only latin letters!")
-    @Column(name = "property_key", nullable = false, unique = true)
+    @Column(name = "property_key", nullable = false)
     private String key;
 
     @Column(name = "property_value")
