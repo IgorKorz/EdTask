@@ -1,6 +1,6 @@
-package view;
+package com.example.view;
 
-import controller.Dictionary;
+import com.example.controller.Dictionary;
 
 import java.util.Scanner;
 import java.util.Map;

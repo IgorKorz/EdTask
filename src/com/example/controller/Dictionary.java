@@ -1,6 +1,5 @@
-package controller;
+package com.example.controller;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 public interface Dictionary {

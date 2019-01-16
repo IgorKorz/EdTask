@@ -1,0 +1,3 @@
+javac -Xlint -d out -sourcepath src -cp resources\libs\spring-context-5.1.4.RELEASE.jar;resources\libs\spring-core-5.1.4.RELEASE.jar;resources\libs\spring-beans-5.1.4.RELEASE.jar src\com\example\MainClass.java src\com\example\controller\*.java src\com\example\model\*.java src\com\example\view\*.java
+java -classpath out;resources\libs\commons-logging-1.2.jar;resources\libs\spring-context-5.1.4.RELEASE.jar;resources\libs\spring-core-5.1.4.RELEASE.jar;resources\libs\spring-beans-5.1.4.RELEASE.jar;resources\libs\spring-expression-5.1.4.RELEASE.jar com.example.MainClass
+pause

@@ -1,6 +1,6 @@
-package model;
+package com.example.model;
 
-import controller.Dictionary;
+import com.example.controller.Dictionary;
 
 public class ValidChecker implements Checker {
     private final String keyNotContainsMsg = "Key not contains!";

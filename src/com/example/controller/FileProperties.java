@@ -1,6 +1,6 @@
-package controller;
+package com.example.controller;
 
-import model.*;
+import com.example.model.*;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
