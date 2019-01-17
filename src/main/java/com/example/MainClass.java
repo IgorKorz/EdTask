@@ -7,11 +7,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MainClass {
     public static void main(String[] args) {
-        String contextFile = "dbdictionary-context.xml";
+        String contextFile = "db-dictionary-context.xml";
 
 //        switch (args[0]) {
-//            case "file": contextFile = "filedictionary-context.xml"; break;
-//            case "database": contextFile = "dbdictionary-context.xml"; break;
+//            case "file": contextFile = "file-dictionary-context.xml"; break;
+//            case "database": contextFile = "db-dictionary-context.xml"; break;
 //            default: System.out.println("Invalid input parameter!"); return;
 //        }
 

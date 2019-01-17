@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.NumberProperty;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 

@@ -30,9 +30,7 @@ public abstract class DBProperties implements Dictionary {
     public synchronized Map<String, String> getDictionary() {
         Map<String, String> keyWithValues = new LinkedHashMap<>();
 
-        for (Map.Entry<String, List<String>> entry : dictionary.entrySet()) {
-            String key = entry.getKey();
-
+        for (String key : dictionary.keySet()) {
             keyWithValues.put(key, values(key));
         }
 
