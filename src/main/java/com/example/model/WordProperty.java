@@ -1,19 +1,23 @@
 package com.example.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "word_dictionary")
 public class WordProperty implements Property {
+    private WordProperty() {}
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "property_key", nullable = false)
+    @Pattern(regexp = "[a-zA-Z]{4}")
+    @Column(name = "key", nullable = false, unique = true)
     private String key;
 
-    @Column(name = "property_value")
+    @Column(name = "value")
     private String value;
 
     @Override

@@ -7,10 +7,6 @@ public interface Dictionary {
 
     String getName();
 
-    String getKeyRegex();
-
-    int getKeyLength();
-
     String remove(String key);
 
     String get(String key);

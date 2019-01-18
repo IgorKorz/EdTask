@@ -1,17 +1,17 @@
 package com.example.model;
 
-import com.example.controller.Dictionary;
+import java.util.Map;
 
 public class ValidChecker implements Checker {
-    private final String keyNotContainsMsg = "Key not contains!";
-    private final String keyIsTooShortMsg = "Key is too short!";
-    private final String keyIsTooLongMsg = "Key is too long!";
-    private final String keyNotMatchMsg = "Key does not match the restrictions!";
-    private String result;
-    private Dictionary dictionary;
+    private Map<String, ?> dictionary;
+    private int lengthKey;
+    private String regexpKey;
+    private String result = "Empty result";
 
-    public ValidChecker(Dictionary dictionary) {
+    public ValidChecker(Map<String, ?> dictionary, int keyLength, String keySymbols) {
         this.dictionary = dictionary;
+        this.lengthKey = keyLength;
+        this.regexpKey = keySymbols + "{" + keyLength + "}";
     }
 
     @Override
@@ -36,20 +36,19 @@ public class ValidChecker implements Checker {
 
     @Override
     public boolean isValidKey(String key) {
-        if (key.length() < dictionary.getKeyLength()) {
-            result = keyIsTooShortMsg;
+        if (isInvalidKey(key)) {
+            result = key.length() < lengthKey ? "Key is too short!"
+                    : key.length() > lengthKey ? "Key is too long!"
+                    : "Key does not match the restrictions!";
 
             return false;
-        }
+        } else return true;
+    }
 
-        if (key.length() > dictionary.getKeyLength()) {
-            result = keyIsTooLongMsg;
-
-            return false;
-        }
-
-        if (!key.matches(dictionary.getKeyRegex())) {
-            result = keyNotMatchMsg;
+    @Override
+    public boolean keyContains(String key) {
+        if (!dictionary.containsKey(key)) {
+            result = "Key not contains!";
 
             return false;
         }
@@ -57,14 +56,7 @@ public class ValidChecker implements Checker {
         return true;
     }
 
-    @Override
-    public boolean keyContains(String key) {
-        if (!dictionary.getDictionary().containsKey(key)) {
-            result = keyNotContainsMsg;
-
-            return false;
-        }
-
-        return true;
+    private boolean isInvalidKey(String key) {
+        return !key.matches(regexpKey);
     }
 }

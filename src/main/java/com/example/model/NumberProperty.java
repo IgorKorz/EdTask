@@ -1,6 +1,8 @@
 package com.example.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "number_dictionary")
@@ -10,10 +12,11 @@ public class NumberProperty implements Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "property_key", nullable = false)
+    @Pattern(regexp = "[0-9]{5}")
+    @Column(name = "key", nullable = false, unique = true)
     private String key;
 
-    @Column(name = "property_value")
+    @Column(name = "value")
     private String value;
 
     @Override

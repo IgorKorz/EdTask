@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="url" value="jdbc:postgresql://localhost:5432/TestDB"/>
         <property name="username" value="postgres"/>
@@ -28,18 +28,20 @@
         </property>
     </bean>
 
-    <bean id="wordDictionary" class="com.example.controller.WordDBProperties">
+    <bean id="wordDictionary" class="com.example.controller.DBProperties">
         <constructor-arg index="0" ref="sessionFactory"/>
         <constructor-arg index="1" value="4"/>
         <constructor-arg index="2" value="[a-zA-Z]"/>
         <constructor-arg index="3" value="Word Dictionary"/>
+        <constructor-arg index="4" value="com.example.model.WordProperty"/>
     </bean>
 
-    <bean id="numberDictionary" class="com.example.controller.NumberDBProperties">
+    <bean id="numberDictionary" class="com.example.controller.DBProperties">
         <constructor-arg index="0" ref="sessionFactory"/>
         <constructor-arg index="1" value="5"/>
         <constructor-arg index="2" value="[0-9]"/>
         <constructor-arg index="3" value="Number Dictionary"/>
+        <constructor-arg index="4" value="com.example.model.NumberProperty"/>
     </bean>
 
     <bean id="menu" class="com.example.view.ConsoleMenu">

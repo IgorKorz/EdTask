@@ -15,22 +15,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 public class FileProperties implements Dictionary {
-    private final int keyLength;
-    private final String keyRegex;
-    private final String name;
+    private String name;
     private Checker checker;
     private Path source;
     private Map<String, String> dictionary;
 
-    public FileProperties(String filePath, int keyLength, String keyRegex, String name) throws IOException {
-        if (keyLength <= 0) this.keyLength = 1;
-        else this.keyLength = keyLength;
-
-        this.keyRegex = keyRegex;
+    public FileProperties(String filePath, int keyLength, String keySymbols, String name) throws IOException {
         this.name = name;
-        this.checker = new ValidChecker(this);
         initSource(filePath);
         initDictionary();
+        this.checker = new ValidChecker(dictionary, keyLength, keySymbols);
     }
 
     @Override
@@ -41,16 +35,6 @@ public class FileProperties implements Dictionary {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getKeyRegex() {
-        return keyRegex;
-    }
-
-    @Override
-    public int getKeyLength() {
-        return keyLength;
     }
 
     @Override

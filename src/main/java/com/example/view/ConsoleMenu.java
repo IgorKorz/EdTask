@@ -30,7 +30,7 @@ public class ConsoleMenu implements Menu {
                         index = scanner.nextInt();
 
                         if (index < 0) System.out.println("Number can not be less than zero!");
-                        else if (index > 0) System.out.println("Number can not be greater than count of dictionaries!");
+                        else if (index > dictionaries.length) System.out.println("Number can not be greater than count of dictionaries!");
                         else loopFlag = false;
                     } else {
                         interrupt = scanner.nextLine().equals("exit");
