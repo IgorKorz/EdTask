@@ -20,7 +20,7 @@ public class FileProperties implements Dictionary {
     private Path source;
     private Map<String, String> dictionary;
 
-    public FileProperties(String filePath, int keyLength, String keySymbols, String name) throws IOException {
+    public FileProperties(String filePath, int keyLength, String keySymbols, String name) {
         this.name = name;
         initSource(filePath);
         initDictionary();
@@ -39,33 +39,33 @@ public class FileProperties implements Dictionary {
 
     @Override
     public String remove(String key) {
-        if (checker.keyContains(key)) {
-            String value = dictionary.remove(key);
+        if (!checker.keyContains(key)) return checker.getResult();
 
-            writeToFile();
+        String value = dictionary.remove(key);
 
-            return checker.resultForRemove(key, value);
-        } else return checker.getResult();
+        writeToFile();
+
+        return checker.resultForRemove(key, value);
     }
 
     @Override
     public String get(String key) {
-        if (checker.keyContains(key)) {
-            String value = dictionary.get(key);
+        if (!checker.keyContains(key)) return checker.getResult();
 
-            return checker.resultForGet(key, value);
-        } else return checker.getResult();
+        String value = dictionary.get(key);
+
+        return checker.resultForGet(key, value);
     }
 
     @Override
     public String put(String key, String value) {
-        if (checker.isValidKey(key)) {
-            dictionary.put(key, value);
+        if (!checker.isValidKey(key)) return checker.getResult();
 
-            writeToFile();
+        dictionary.put(key, value);
 
-            return checker.resultForPut(key, value);
-        } else return checker.getResult();
+        writeToFile();
+
+        return checker.resultForPut(key, value);
     }
 
     private void writeToFile() {
@@ -73,7 +73,7 @@ public class FileProperties implements Dictionary {
             for (Map.Entry<String, String> entry : dictionary.entrySet())
                 bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

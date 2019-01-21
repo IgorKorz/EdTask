@@ -36,24 +36,22 @@ public class ValidChecker implements Checker {
 
     @Override
     public boolean isValidKey(String key) {
-        if (isInvalidKey(key)) {
-            result = key.length() < lengthKey ? "Key is too short!"
-                    : key.length() > lengthKey ? "Key is too long!"
-                    : "Key does not match the restrictions!";
+        if (!isInvalidKey(key)) return true;
 
-            return false;
-        } else return true;
+        result = key.length() < lengthKey ? "Key is too short!"
+                : key.length() > lengthKey ? "Key is too long!"
+                : "Key does not match the restrictions!";
+
+        return false;
     }
 
     @Override
     public boolean keyContains(String key) {
-        if (!dictionary.containsKey(key)) {
-            result = "Key not contains!";
+        if (dictionary.containsKey(key)) return true;
 
-            return false;
-        }
+        result = "Key not contains!";
 
-        return true;
+        return false;
     }
 
     private boolean isInvalidKey(String key) {

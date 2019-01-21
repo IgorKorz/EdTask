@@ -3,14 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="wordDictionary" class="com.example.controller.WordDBProperties">
+    <bean id="wordDictionary" class="com.example.controller.FileProperties">
         <constructor-arg index="0" value="resources\\wordproperties.txt"/>
         <constructor-arg index="1" value="4"/>
         <constructor-arg index="2" value="[a-zA-Z]"/>
         <constructor-arg index="3" value="Word Dictionary"/>
     </bean>
 
-    <bean id="numberDictionary" class="com.example.controller.NumberDBProperties">
+    <bean id="numberDictionary" class="com.example.controller.FileProperties">
         <constructor-arg index="0" value="resources\\numberproperties.txt"/>
         <constructor-arg index="1" value="5"/>
         <constructor-arg index="2" value="[0-9]"/>
