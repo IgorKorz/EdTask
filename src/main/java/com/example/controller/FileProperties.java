@@ -68,15 +68,6 @@ public class FileProperties implements Dictionary {
         return checker.resultForPut(key, value);
     }
 
-    private void writeToFile() {
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
-            for (Map.Entry<String, String> entry : dictionary.entrySet())
-                bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void initDictionary() {
         dictionary = new LinkedHashMap<>();
 
@@ -89,6 +80,15 @@ public class FileProperties implements Dictionary {
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void writeToFile() {
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
+            for (Map.Entry<String, String> entry : dictionary.entrySet())
+                bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

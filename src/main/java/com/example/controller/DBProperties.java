@@ -1,12 +1,18 @@
 package com.example.controller;
 
-import com.example.model.*;
+import com.example.model.Checker;
+import com.example.model.Property;
+import com.example.model.ValidChecker;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional(propagation = Propagation.REQUIRED)
 public class DBProperties implements Dictionary {
@@ -125,11 +131,6 @@ public class DBProperties implements Dictionary {
 
         return checker.resultForRemove(key, dictionary.remove(key));
     }
-    //endregion
-
-    private Session currentSession() {
-        return dataSource.getCurrentSession();
-    }
 
     private void initDictionary() {
         Session session = currentSession();
@@ -140,6 +141,15 @@ public class DBProperties implements Dictionary {
             String key = property.getKey();
             String value = property.getValue();
             dictionary.put(key, value);
+        }
+    }
+    //endregion
+
+    private Session currentSession() {
+        try {
+            return dataSource.getCurrentSession();
+        } catch (HibernateException e) {
+            return dataSource.openSession();
         }
     }
 }
