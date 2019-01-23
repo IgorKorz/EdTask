@@ -12,4 +12,8 @@ public interface Property {
     String getValue();
 
     void setValue(String value);
+
+    int getType();
+
+    void setType(int type);
 }

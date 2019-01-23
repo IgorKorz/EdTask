@@ -15,8 +15,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="annotatedClasses">
             <list>
-                <value>com.example.model.WordProperty</value>
-                <value>com.example.model.NumberProperty</value>
+                <value>com.example.model.DictionaryRecord</value>
             </list>
         </property>
         <property name="hibernateProperties">
@@ -38,7 +37,7 @@
         <constructor-arg index="1" value="4"/>
         <constructor-arg index="2" value="[a-zA-Z]"/>
         <constructor-arg index="3" value="Word Dictionary"/>
-        <constructor-arg index="4" value="com.example.model.WordProperty"/>
+        <constructor-arg index="4" value="0"/>
     </bean>
 
     <bean id="numberDictionary" class="com.example.controller.DBProperties">
@@ -46,7 +45,7 @@
         <constructor-arg index="1" value="5"/>
         <constructor-arg index="2" value="[0-9]"/>
         <constructor-arg index="3" value="Number Dictionary"/>
-        <constructor-arg index="4" value="com.example.model.NumberProperty"/>
+        <constructor-arg index="4" value="1"/>
     </bean>
 
     <bean id="menu" class="com.example.view.ConsoleMenu">

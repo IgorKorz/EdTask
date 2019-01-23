@@ -1,22 +1,22 @@
 package com.example.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 
 @Entity
-@Table(name = "number_dictionary")
-public class NumberProperty implements Property {
+@Table(name = "dictionary")
+public class DictionaryRecord implements Property {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Pattern(regexp = "[0-9]{5}")
-    @Column(name = "key", nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String key;
 
-    @Column(name = "value")
+    @Column(nullable = false)
     private String value;
+
+    @Column(nullable = false)
+    private int type;
 
     @Override
     public long getId() {
@@ -47,5 +47,14 @@ public class NumberProperty implements Property {
     public void setValue(String value) {
         this.value = value;
     }
-}
 
+    @Override
+    public int getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(int type) {
+        this.type = type;
+    }
+}
