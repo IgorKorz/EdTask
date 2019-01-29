@@ -1,22 +1,21 @@
 package com.example.controller;
 
 import com.example.model.DictionaryRecord;
-import com.example.model.Property;
 
-import java.util.List;
+import org.springframework.ui.Model;
 
 public interface DictionaryController {
-    Property putProperty(DictionaryRecord property);
+    String putProperty(DictionaryRecord property, Model model);
 
-    List<Property> getDictionary();
+    String getDictionary(Model model);
 
-    List<Property> getByKey(String key);
+    String getByKey(String key, Model model);
 
-    List<Property> getByValue(String value);
+    String getByValue(String value, Model model);
 
-    Property updateProperty(String key, String oldValue, String newValue);
+    String updateProperty(String key, String oldValue, String newValue, Model model);
 
-    Property removeKey(String key);
+    String removeKey(String key, Model model);
 
-    Property removeProperty(String key, String value);
+    String removeProperty(String key, String value, Model model);
 }

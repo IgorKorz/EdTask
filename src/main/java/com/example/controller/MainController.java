@@ -9,8 +9,12 @@ import java.util.List;
 
 @Controller
 public class MainController {
+    private final List<String> dictionaryNameList;
+
     @Autowired
-    private List<String> dictionaryNameList;
+    public MainController(List<String> dictionaryNameList) {
+        this.dictionaryNameList = dictionaryNameList;
+    }
 
     @GetMapping
     public String getDictionaryList(Model model) {
