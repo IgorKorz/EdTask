@@ -1,9 +1,9 @@
 package com.example.view;
 
 import com.example.controller.Dictionary;
+import com.example.model.Property;
 
 import java.util.Scanner;
-import java.util.Map;
 
 public class ConsoleMenu implements Menu {
     private Dictionary[] dictionaries;
@@ -32,9 +32,11 @@ public class ConsoleMenu implements Menu {
                         if (index < 0) System.out.println("Number can not be less than zero!");
                         else if (index > dictionaries.length) System.out.println("Number can not be greater than count of dictionaries!");
                         else loopFlag = false;
-                    } else {
-                        interrupt = scanner.nextLine().equals("exit");
+                    } else if (scanner.nextLine().equals("exit")){
+                        interrupt = true;
                         loopFlag = false;
+                    } else {
+                        System.out.println("Invalid command!");
                     }
 
                     System.out.println("Press Enter");
@@ -104,32 +106,44 @@ public class ConsoleMenu implements Menu {
     }
 
     private void printDictionary(Dictionary dictionary) {
-        for (Map.Entry<String, String> entry : dictionary.getDictionary().entrySet()) {
-            System.out.println(entry.getKey() + "=" + entry.getValue());
-        }
+        for (Property property : dictionary.getDictionary())
+            System.out.println(property);
     }
 
-    private void removeValue(Dictionary dictionary, String key) {
-        System.out.println(dictionary.remove(key));
+    private void putValue(Dictionary dictionary, String key, String value) {
+        if (checkAndWrite(dictionary.put(key, value)))
+            System.out.print(" put");
     }
 
     private void getValue(Dictionary dictionary, String key) {
         System.out.println(dictionary.get(key));
     }
 
-    private void putValue(Dictionary dictionary, String key, String value) {
-        System.out.println(dictionary.put(key, value));
+    private void removeValue(Dictionary dictionary, String key) {
+        if (checkAndWrite(dictionary.remove(key)))
+            System.out.print(" removed");
     }
 
     private void printDictionariesList() {
-        for (int i = 0; i < dictionaries.length; i++) {
+        for (int i = 0; i < dictionaries.length; i++)
             System.out.println(i + "-" + dictionaries[i].getName());
-        }
     }
 
     private void clearConsole() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++)
             System.out.println();
+    }
+
+    private boolean checkAndWrite(Property property) {
+        if (property.getId() <= 0) {
+            System.out.println(property.getValue());
+
+            return false;
+        }
+        else {
+            System.out.println(property);
+
+            return true;
         }
     }
 }

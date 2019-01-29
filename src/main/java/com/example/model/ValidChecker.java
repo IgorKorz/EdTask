@@ -1,55 +1,61 @@
 package com.example.model;
 
-import java.util.Map;
+import java.util.List;
 
 public class ValidChecker implements Checker {
-    private Map<String, ?> dictionary;
+    private List<Property> dictionary;
     private int lengthKey;
     private String regexpKey;
-    private String result = "Empty result";
+    private Property result;
 
-    public ValidChecker(Map<String, ?> dictionary, int keyLength, String keySymbols) {
+    public ValidChecker(List<Property> dictionary, int keyLength, String keySymbols) {
         this.dictionary = dictionary;
         this.lengthKey = keyLength;
         this.regexpKey = keySymbols + "{" + keyLength + "}";
+        this.result = new DictionaryRecord();
+
+        result.setId(-1);
+        result.setKey("fail");
+        result.setValue("Empty result!");
     }
 
     @Override
-    public String getResult() {
+    public Property getResult() {
         return result;
     }
 
     @Override
-    public String resultForRemove(String key, String value) {
-        return result = key + "=" + value + " removed";
-    }
-
-    @Override
-    public String resultForGet(String key, String value) {
-        return result = key + "=" + value;
-    }
-
-    @Override
-    public String resultForPut(String key, String value) {
-        return result = key + "=" + value + " put";
-    }
-
-    @Override
     public boolean isValidKey(String key) {
-        if (!isInvalidKey(key)) return true;
+        if (!isInvalidKey(key)) {
+            result.setKey("success");
 
-        result = key.length() < lengthKey ? "Key is too short!"
+            return true;
+        }
+
+        result.setId(-1);
+        result.setKey("fail");
+        result.setValue(key.length() != lengthKey ? "Key is too short!"
                 : key.length() > lengthKey ? "Key is too long!"
-                : "Key does not match the restrictions!";
+                : "Key does not match the restrictions!");
 
         return false;
     }
 
     @Override
-    public boolean keyContains(String key) {
-        if (dictionary.containsKey(key)) return true;
+    public boolean containsKey(String key) {
+        for (int i = 0; i < dictionary.size(); i++) {
+            if (dictionary.get(i).getKey().equals(key)) {
+                result.setId(i);
+                result.setKey("Search success");
+                result.setValue("Property with key " + key + " find on " + i + " position");
 
-        result = "Key not contains!";
+                return true;
+            }
+        }
+
+        result.setId(-1);
+        result.setKey("Search fail");
+        result.setValue("Key not contains!");
 
         return false;
     }

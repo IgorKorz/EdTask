@@ -57,4 +57,9 @@ public class DictionaryRecord implements Property {
     public void setType(int type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return key + "=" + value;
+    }
 }

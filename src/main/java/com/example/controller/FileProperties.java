@@ -7,8 +7,7 @@ import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.io.BufferedWriter;
@@ -18,7 +17,7 @@ public class FileProperties implements Dictionary {
     private String name;
     private Checker checker;
     private Path source;
-    private Map<String, String> dictionary;
+    private List<Property> dictionary;
 
     public FileProperties(String filePath, int keyLength, String keySymbols, String name) {
         this.name = name;
@@ -28,8 +27,8 @@ public class FileProperties implements Dictionary {
     }
 
     @Override
-    public Map<String, String> getDictionary() {
-        return new LinkedHashMap<>(dictionary);
+    public List<Property> getDictionary() {
+        return new LinkedList<>(dictionary);
     }
 
     @Override
@@ -38,55 +37,70 @@ public class FileProperties implements Dictionary {
     }
 
     @Override
-    public String remove(String key) {
-        if (!checker.keyContains(key)) return checker.getResult();
-
-        String value = dictionary.remove(key);
-
-        writeToFile();
-
-        return checker.resultForRemove(key, value);
-    }
-
-    @Override
-    public String get(String key) {
-        if (!checker.keyContains(key)) return checker.getResult();
-
-        String value = dictionary.get(key);
-
-        return checker.resultForGet(key, value);
-    }
-
-    @Override
-    public String put(String key, String value) {
+    public Property put(String key, String value) {
         if (!checker.isValidKey(key)) return checker.getResult();
 
-        dictionary.put(key, value);
+        Property record;
+
+        if (checker.containsKey(key)) {
+            record = dictionary.get((int) checker.getResult().getId());
+            record.setValue(value);
+        } else {
+            record = new DictionaryRecord();
+            record.setKey(key);
+            record.setValue(value);
+
+            dictionary.add(record);
+        }
 
         writeToFile();
 
-        return checker.resultForPut(key, value);
+        return record;
+    }
+
+    @Override
+    public Property get(String key) {
+        if (!checker.containsKey(key)) return checker.getResult();
+
+        return dictionary.get((int) checker.getResult().getId());
+    }
+
+    @Override
+    public Property remove(String key) {
+        if (!checker.containsKey(key)) return checker.getResult();
+
+        Property record = dictionary.get((int) checker.getResult().getId());
+        dictionary.remove((int) checker.getResult().getId());
+
+        if (record != null)
+            writeToFile();
+
+        return record;
     }
 
     private void initDictionary() {
-        dictionary = new LinkedHashMap<>();
+        dictionary = new LinkedList<>();
 
         try {
             List<String> lines = Files.readAllLines(source, StandardCharsets.UTF_8);
 
             for (String line : lines) {
                 String[] keyValue = line.split("=");
-                dictionary.put(keyValue[0], keyValue[1]);
+                DictionaryRecord record = new DictionaryRecord();
+                record.setKey(keyValue[0]);
+                record.setValue(keyValue[1]);
+
+                dictionary.add(record);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private void writeToFile() {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
-            for (Map.Entry<String, String> entry : dictionary.entrySet())
-                bufferedWriter.write(entry.getKey() + "=" + entry.getValue() + "\n");
+            for (Property record : dictionary)
+                bufferedWriter.write(record.getKey() + "=" + record.getValue() + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }

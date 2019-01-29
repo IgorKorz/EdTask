@@ -1,15 +1,17 @@
 package com.example.controller;
 
-import java.util.Map;
+import com.example.model.Property;
+
+import java.util.List;
 
 public interface Dictionary {
-    Map<String, String> getDictionary();
+    Property put(String key, String value);
 
     String getName();
 
-    String remove(String key);
+    List<Property> getDictionary();
 
-    String get(String key);
+    Property get(String key);
 
-    String put(String key, String value);
+    Property remove(String key);
 }
