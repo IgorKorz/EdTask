@@ -1,6 +1,6 @@
 package com.example.model;
 
-import com.example.entity.Value;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 

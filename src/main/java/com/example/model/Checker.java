@@ -3,7 +3,7 @@ package com.example.model;
 public interface Checker {
     Property getResult();
 
-    Property result(String key, String value);
+    Property result(long id, String key, String value);
 
     boolean isValidKey(String key);
 

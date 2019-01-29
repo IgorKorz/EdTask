@@ -1,8 +1,5 @@
 package com.example.model;
 
-import com.example.entity.Key;
-import com.example.entity.Value;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -25,8 +22,9 @@ public class ValidChecker implements Checker {
     }
 
     @Override
-    public Property result(String key, String value) {
+    public Property result(long id, String key, String value) {
         Property result = new Result();
+        result.setId(id);
         result.setKey(key);
         result.addValue(value);
 
@@ -43,7 +41,7 @@ public class ValidChecker implements Checker {
             return true;
         }
 
-        result.setId(-1);
+        result.setId(-400);
         result.setKey("fail");
         result.addValue(key.length() != lengthKey
                         ? "Key's length must be " + lengthKey + " symbols!"
@@ -64,7 +62,7 @@ public class ValidChecker implements Checker {
             }
         }
 
-        result.setId(-1);
+        result.setId(-404);
         result.setKey("Search fail");
         result.addValue("Key " + key + " not contains!");
 
@@ -84,7 +82,7 @@ public class ValidChecker implements Checker {
                 }
         }
 
-        result.setId(-1);
+        result.setId(-404);
         result.setKey("Search fail");
         result.addValue("Property with value " + value + " not contains!");
 
@@ -111,9 +109,9 @@ public class ValidChecker implements Checker {
             }
         }
 
-        result.setId(-1);
+        result.setId(-404);
         result.setKey("Search fail");
-        result.addValue("Property with key " + key + "and value " + value + " not contains!");
+        result.addValue("Property with key " + key + " and value " + value + " not contains!");
 
         return false;
     }
@@ -123,7 +121,7 @@ public class ValidChecker implements Checker {
     }
 
     private class Result implements Property {
-        private long id = -1;
+        private long id = -400;
         private String key;
         private String value;
 
@@ -149,6 +147,7 @@ public class ValidChecker implements Checker {
 
         @Override
         public void setKey(String key) {
+            this.key = key;
         }
 
         @Override
@@ -163,87 +162,6 @@ public class ValidChecker implements Checker {
 
         @Override
         public void addValue(String value) {
-            this.value = value;
-        }
-    }
-
-    private class CheckerKey implements Key {
-        private String key;
-
-        private CheckerKey(String key) {
-            this.key = key;
-        }
-
-        @Override
-        public long getId() {
-            return -1;
-        }
-
-        @Override
-        public void setId(long id) {
-
-        }
-
-        @Override
-        public String getKey() {
-            return key;
-        }
-
-        @Override
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        @Override
-        public List<Value> getValues() {
-            return null;
-        }
-
-        @Override
-        public int getType() {
-            return -1;
-        }
-
-        @Override
-        public void setType(int type) {
-
-        }
-    }
-
-    private class CheckerValue implements Value {
-        private String value;
-
-        private CheckerValue(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public long getId() {
-            return -1;
-        }
-
-        @Override
-        public void setId(long id) {
-
-        }
-
-        @Override
-        public Key getKey() {
-            return null;
-        }
-
-        @Override
-        public void setKey(Key key) {
-
-        }
-
-        @Override
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public void setValue(String value) {
             this.value = value;
         }
     }

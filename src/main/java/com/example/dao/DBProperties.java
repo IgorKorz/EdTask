@@ -77,7 +77,7 @@ public class DBProperties implements Dictionary {
                 break;
             }
 
-        return checker.result(key, value);
+        return checker.result(0, key, value);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class DBProperties implements Dictionary {
             }
         }
 
-        return checker.result(key, newValue);
+        return checker.result(propertyValue.getId(), key, newValue);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class DBProperties implements Dictionary {
                 dictionary.remove(i);
         }
 
-        return checker.result(key, "");
+        return checker.result(propertyKey.getId(), key, "");
     }
 
     @Override
@@ -208,7 +208,7 @@ public class DBProperties implements Dictionary {
                     }
         }
 
-        return checker.result(key, value);
+        return checker.result(propertyValue.getId(), key, value);
     }
 
     private void initDictionary() {
