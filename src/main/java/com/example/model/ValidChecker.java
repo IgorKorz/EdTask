@@ -34,14 +34,14 @@ public class ValidChecker implements Checker {
     @Override
     public boolean isValidKey(String key) {
         if (!isInvalidKey(key)) {
-            result.setId(-1);
+            result.setId(200);
             result.setKey("success");
             result.addValue("Key " + key + " is valid");
 
             return true;
         }
 
-        result.setId(-400);
+        result.setId(400);
         result.setKey("fail");
         result.addValue(key.length() != lengthKey
                         ? "Key's length must be " + lengthKey + " symbols!"
@@ -62,7 +62,7 @@ public class ValidChecker implements Checker {
             }
         }
 
-        result.setId(-404);
+        result.setId(404);
         result.setKey("Search fail");
         result.addValue("Key " + key + " not contains!");
 
@@ -82,7 +82,7 @@ public class ValidChecker implements Checker {
                 }
         }
 
-        result.setId(-404);
+        result.setId(404);
         result.setKey("Search fail");
         result.addValue("Property with value " + value + " not contains!");
 
@@ -101,7 +101,7 @@ public class ValidChecker implements Checker {
                             result.setId(i);
                             result.setKey("Search success");
                             result.addValue("Property with key " + key
-                                    + "and value " + value
+                                    + " and value " + value
                                     + " found on " + i + " position");
 
                             return true;
@@ -109,7 +109,7 @@ public class ValidChecker implements Checker {
             }
         }
 
-        result.setId(-404);
+        result.setId(404);
         result.setKey("Search fail");
         result.addValue("Property with key " + key + " and value " + value + " not contains!");
 

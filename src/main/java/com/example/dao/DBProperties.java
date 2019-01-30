@@ -46,7 +46,7 @@ public class DBProperties implements Dictionary {
 
     @Override
     public Property put(String key, String value) {
-        if (checker.contains(key, value)) return checker.getResult();
+        if (checker.contains(key, value)) return checker.result(200, key, value);
 
         Session session = sessionFactory.getCurrentSession();
         Key propertyKey;
@@ -77,7 +77,7 @@ public class DBProperties implements Dictionary {
                 break;
             }
 
-        return checker.result(0, key, value);
+        return checker.result(201, key, value);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class DBProperties implements Dictionary {
             }
         }
 
-        return checker.result(propertyValue.getId(), key, newValue);
+        return checker.result(200, key, newValue);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class DBProperties implements Dictionary {
                 dictionary.remove(i);
         }
 
-        return checker.result(propertyKey.getId(), key, "");
+        return checker.result(200, key, "");
     }
 
     @Override
@@ -186,29 +186,27 @@ public class DBProperties implements Dictionary {
         if (!checker.contains(key, value)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
-        Value propertyValue = session
+        List<Value> valueList = session
                 .createQuery("from " + valEntity
                         +" where key.key = :key and key.type = :type and value = :value", Value.class)
                 .setParameter("key", key)
                 .setParameter("type", type)
                 .setParameter("value", value)
-                .getSingleResult();
+                .getResultList();
 
-        session.remove(propertyValue);
+        for (Value v : valueList)
+            session.remove(v);
 
         for (int i = (int) checker.getResult().getId(); i < dictionary.size(); i++) {
             Property property = dictionary.get(i);
 
             if (property.getKey().equals(key))
                 for (int j = 0; j < property.getValues().size(); j++)
-                    if (property.getValues().get(j).equals(value)) {
+                    if (property.getValues().get(j).equals(value))
                         property.getValues().remove(j);
-
-                        break;
-                    }
         }
 
-        return checker.result(propertyValue.getId(), key, value);
+        return checker.result(200, key, value);
     }
 
     private void initDictionary() {

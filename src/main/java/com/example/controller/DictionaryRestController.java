@@ -14,9 +14,7 @@ public interface DictionaryRestController {
 
     List<Property> getByValue(String value);
 
-    Property updateProperty(String key, String oldValue, String newValue);
+    Property updateProperty(DictionaryRecord property);
 
-    Property removeKey(String key);
-
-    Property removeProperty(String key, String value);
+    Property removeProperty(DictionaryRecord property);
 }

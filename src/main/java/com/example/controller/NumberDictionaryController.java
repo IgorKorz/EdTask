@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping("/number-dictionary")
 public class NumberDictionaryController implements DictionaryController {
     private final Dictionary dictionary;
 
@@ -19,15 +21,16 @@ public class NumberDictionaryController implements DictionaryController {
     }
 
     @Override
-    @PostMapping("/number-dictionary/records")
-    public String putProperty(@RequestBody DictionaryRecord property, Model model) {
-        model.addAttribute("response", dictionary.put(property.getKey(), property.getValues().get(0)));
+    @PostMapping("/records")
+    public ModelAndView putProperty(@RequestBody DictionaryRecord property) {
+        ModelAndView view = new ModelAndView("redirect:/number-dictionary");
+        view.addObject("response", dictionary.put(property.getKey(), property.getValues().get(0)));
 
-        return "dictionary";
+        return view;
     }
 
     @Override
-    @GetMapping("/number-dictionary")
+    @GetMapping
     public String getDictionary(Model model) {
         model.addAttribute("dictionary", dictionary.getDictionary());
 
@@ -35,7 +38,7 @@ public class NumberDictionaryController implements DictionaryController {
     }
 
     @Override
-    @GetMapping("/number-dictionary/values/{key}")
+    @GetMapping("/values/{key}")
     public String getByKey(@PathVariable String key, Model model) {
         model.addAttribute("dictionary", dictionary.get(key));
 
@@ -43,7 +46,7 @@ public class NumberDictionaryController implements DictionaryController {
     }
 
     @Override
-    @GetMapping("/number-dictionary/keys/{value}")
+    @GetMapping("/keys/{value}")
     public String getByValue(@PathVariable String value, Model model) {
         model.addAttribute("dictionary", dictionary.getKeys(value));
 
@@ -51,32 +54,33 @@ public class NumberDictionaryController implements DictionaryController {
     }
 
     @Override
-    @PutMapping(value = "/rest/number-dictionary/records", params = { "key", "oldValue", "newValue" })
-    public String updateProperty(@RequestParam(name = "key") String key,
-                                 @RequestParam(name = "oldValue") String oldValue,
-                                 @RequestParam(name = "newValue") String newValue,
-                                 Model model) {
-        model.addAttribute("response", dictionary.update(key, oldValue, newValue));
+    @PutMapping(value = "/records", params = { "key", "oldValue", "newValue" })
+    public ModelAndView updateProperty(@RequestParam String key,
+                                       @RequestParam String oldValue,
+                                       @RequestParam String newValue) {
+        ModelAndView view = new ModelAndView("redirect:/number-dictionary");
+        view.addObject("response", dictionary.update(key, oldValue, newValue));
 
-        return "dictionary";
+        return view;
     }
 
     @Override
-    @DeleteMapping("/number-dictionary/records/{key}")
+    @DeleteMapping(value = "/records", params = "key")
     @ResponseBody
-    public String removeKey(@PathVariable String key, Model model) {
-        model.addAttribute("response", dictionary.removeAll(key));
+    public ModelAndView removeKey(@RequestParam String key) {
+        ModelAndView view = new ModelAndView("redirect:/number-dictionary");
+        view.addObject("response", dictionary.removeAll(key));
 
-        return "dictionary";
+        return view;
     }
 
     @Override
-    @DeleteMapping("/number-dictionary/records/{key}/{value}")
-    public String removeProperty(@PathVariable String key,
-                                 @PathVariable String value,
-                                 Model model) {
-        model.addAttribute("response", dictionary.remove(key, value));
+    @DeleteMapping(value = "/records", params = { "key", "value" })
+    public ModelAndView removeProperty(@RequestParam String key,
+                                       @RequestParam String value) {
+        ModelAndView view = new ModelAndView("redirect:/number-dictionary");
+        view.addObject("response", dictionary.remove(key, value));
 
-        return "dictionary";
+        return view;
     }
 }

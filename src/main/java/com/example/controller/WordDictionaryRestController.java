@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/rest/word-dictionary")
 public class WordDictionaryRestController implements DictionaryRestController {
     private final Dictionary dictionary;
 
@@ -20,48 +21,41 @@ public class WordDictionaryRestController implements DictionaryRestController {
     }
 
     @Override
-    @PostMapping("/rest/word-dictionary/records")
+    @PostMapping("/records")
     public Property putProperty(@RequestBody DictionaryRecord property) {
         return dictionary.put(property.getKey(), property.getValues().get(0));
     }
 
     @Override
-    @GetMapping("/rest/word-dictionary")
+    @GetMapping
     public List<Property> getDictionary() {
         return dictionary.getDictionary();
     }
 
     @Override
-    @GetMapping("/rest/word-dictionary/values/{key}")
+    @GetMapping("/values/{key}")
     public List<Property> getByKey(@PathVariable String key) {
         return dictionary.get(key);
     }
 
     @Override
-    @GetMapping("/rest/word-dictionary/keys/{value}")
+    @GetMapping("/keys/{value}")
     public List<Property> getByValue(@PathVariable String value) {
         return dictionary.getKeys(value);
     }
 
     @Override
-    @PutMapping(value = "/rest/word-dictionary/records", params = { "key", "oldValue", "newValue" })
-    public Property updateProperty(@RequestParam(name = "key") String key,
-                                   @RequestParam(name = "oldValue") String oldValue,
-                                   @RequestParam(name = "newValue") String newValue) {
-        return dictionary.update(key, oldValue, newValue);
+    @PutMapping("/records")
+    public Property updateProperty(@RequestBody DictionaryRecord property) {
+        return dictionary.update(property.getKey(), property.getValues().get(0), property.getValues().get(1));
     }
 
     @Override
-    @DeleteMapping("/rest/word-dictionary/records/{key}")
-    @ResponseBody
-    public Property removeKey(@PathVariable String key) {
-        return dictionary.removeAll(key);
-    }
-
-    @Override
-    @DeleteMapping("/rest/word-dictionary/records/{key}/{value}")
-    public Property removeProperty(@PathVariable String key,
-                                   @PathVariable String value) {
-        return dictionary.remove(key, value);
+    @DeleteMapping("/records")
+    public Property removeProperty(@RequestBody DictionaryRecord property) {
+        if (property.getValues() == null || property.getValues().isEmpty())
+            return dictionary.removeAll(property.getKey());
+        else
+            return dictionary.remove(property.getKey(), property.getValues().get(0));
     }
 }

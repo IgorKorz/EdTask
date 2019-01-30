@@ -58,6 +58,11 @@ public class DictionaryRecord implements Property {
         this.values = values;
     }
 
+    public void setValues(String value) {
+        values = new LinkedList<>();
+        values.add(value);
+    }
+
     @Override
     public void addValue(String value) {
         values.add(value);
