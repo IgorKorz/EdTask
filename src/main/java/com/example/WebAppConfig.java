@@ -16,9 +16,13 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -31,15 +35,27 @@ import java.util.Properties;
 @ComponentScan("com.example")
 @EnableTransactionManagement
 @EnableWebMvc
-public class WebAppConfig {
+public class WebAppConfig implements WebMvcConfigurer {
     @Bean
-    public ViewResolver jspViewResolver() {
-        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
-        viewResolver.setPrefix("/view/");
+    public ViewResolver viewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/view/");
         viewResolver.setSuffix(".jsp");
         viewResolver.setViewClass(JstlView.class);
 
         return viewResolver;
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/WEB-INF/resources/**")
+                .addResourceLocations("/WEB-INF/resources/").setCachePeriod(3600)
+                .resourceChain(true).addResolver(new PathResourceResolver());
     }
 
     @Bean

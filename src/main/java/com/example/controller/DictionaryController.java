@@ -1,9 +1,7 @@
 package com.example.controller;
 
-import com.example.entity.PropertyKey;
-import com.example.controller.utility.OneValueRecord;
+import com.example.controller.utility.*;
 
-import com.example.controller.utility.RecordForUpdate;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +16,7 @@ public interface DictionaryController {
 
     ModelAndView updateProperty(RecordForUpdate record);
 
-    ModelAndView removeKey(PropertyKey key);
+    ModelAndView removeKey(Key key);
 
     ModelAndView removeProperty(OneValueRecord record);
 }

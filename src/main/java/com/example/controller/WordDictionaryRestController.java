@@ -1,10 +1,8 @@
 package com.example.controller;
 
+import com.example.controller.utility.*;
 import com.example.dao.Dictionary;
-import com.example.entity.PropertyKey;
-import com.example.controller.utility.OneValueRecord;
 import com.example.model.Property;
-import com.example.controller.utility.RecordForUpdate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,7 +51,7 @@ public class WordDictionaryRestController implements DictionaryRestController {
     }
 
     @Override
-    public Property removeKey(@RequestBody PropertyKey key) {
+    public Property removeKey(@RequestBody Key key) {
         return dictionary.removeAll(key.getKey());
     }
 

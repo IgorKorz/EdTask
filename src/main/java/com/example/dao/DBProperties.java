@@ -14,13 +14,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 @Repository
 public class DBProperties implements Dictionary {
     private SessionFactory sessionFactory;
@@ -154,9 +155,7 @@ public class DBProperties implements Dictionary {
 
         session.update(propertyValue);
 
-        for (int i = (int) checker.getResult().getId(); i < dictionary.size(); i++) {
-            Property property = dictionary.get(i);
-
+        for (Property property : dictionary) {
             if (property.getKey().equals(key)) {
                 for (int j = 0; j < property.getValues().size(); j++)
                     if (property.getValues().get(j).equals(oldValue)) {
@@ -222,14 +221,8 @@ public class DBProperties implements Dictionary {
         return checker.result(200, key, value);
     }
 
-    private synchronized void initDictionary() {
-        Session session;
-
-        try {
-            session = sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            session = sessionFactory.openSession();
-        }
+    public synchronized void initDictionary() {
+        Session session = sessionFactory.openSession();
 
         List<Key> keyList = session
                 .createQuery("from " + keyEntity

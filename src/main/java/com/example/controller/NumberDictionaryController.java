@@ -1,9 +1,7 @@
 package com.example.controller;
 
+import com.example.controller.utility.*;
 import com.example.dao.Dictionary;
-import com.example.entity.PropertyKey;
-import com.example.controller.utility.OneValueRecord;
-import com.example.controller.utility.RecordForUpdate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,7 +70,7 @@ public class NumberDictionaryController implements DictionaryController {
     @Override
     @DeleteMapping("/records/keys")
     @ResponseBody
-    public ModelAndView removeKey(@RequestBody PropertyKey key) {
+    public ModelAndView removeKey(@RequestBody Key key) {
         ModelAndView view = new ModelAndView("redirect:" + controllerPath);
         view.addObject("response", dictionary.removeAll(key.getKey()));
 
