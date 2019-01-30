@@ -33,6 +33,14 @@ public class ValidChecker implements Checker {
 
     @Override
     public boolean isValidKey(String key) {
+        if (key == null || key.isEmpty()) {
+            result.setId(400);
+            result.setKey("error");
+            result.addValue("Empty key!");
+
+            return false;
+        }
+
         if (!isInvalidKey(key)) {
             result.setId(200);
             result.setKey("success");
@@ -42,7 +50,7 @@ public class ValidChecker implements Checker {
         }
 
         result.setId(400);
-        result.setKey("fail");
+        result.setKey("error");
         result.addValue(key.length() != lengthKey
                         ? "Key's length must be " + lengthKey + " symbols!"
                         : "Key does not match the restrictions!");
@@ -51,12 +59,25 @@ public class ValidChecker implements Checker {
     }
 
     @Override
+    public boolean isValidValue(String value) {
+        if (value == null || value.isEmpty()) {
+            result.setId(400);
+            result.setKey("error");
+            result.addValue("Empty value!");
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean containsKey(String key) {
         for (int i = 0; i < dictionary.size(); i++) {
             if (dictionary.get(i).getKey().equals(key)) {
                 result.setId(i);
                 result.setKey("Search success");
-                result.addValue("Property with key " + key + " found on " + i + " position");
+                result.addValue("Property with key " + key + " exists!");
 
                 return true;
             }
@@ -76,7 +97,7 @@ public class ValidChecker implements Checker {
                 if (v.equals(value)) {
                     result.setId(i);
                     result.setKey("Search success");
-                    result.addValue("Property with value " + value + " found on " + i + " position");
+                    result.addValue("Property with value " + value + " exists!");
 
                     return true;
                 }
@@ -100,9 +121,7 @@ public class ValidChecker implements Checker {
                         if (v.equals(value)) {
                             result.setId(i);
                             result.setKey("Search success");
-                            result.addValue("Property with key " + key
-                                    + " and value " + value
-                                    + " found on " + i + " position");
+                            result.addValue("Property with key " + key + " and value " + value + " exists!");
 
                             return true;
                         }
@@ -153,11 +172,6 @@ public class ValidChecker implements Checker {
         @Override
         public List<String> getValues() {
             return Collections.singletonList(value);
-        }
-
-        @Override
-        public void setValues(List<String> values) {
-            value = values.get(0);
         }
 
         @Override

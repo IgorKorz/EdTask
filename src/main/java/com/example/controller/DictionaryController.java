@@ -1,12 +1,14 @@
 package com.example.controller;
 
-import com.example.model.DictionaryRecord;
+import com.example.entity.PropertyKey;
+import com.example.controller.utility.OneValueRecord;
 
+import com.example.controller.utility.RecordForUpdate;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 public interface DictionaryController {
-    ModelAndView putProperty(DictionaryRecord property);
+    ModelAndView putProperty(OneValueRecord record);
 
     String getDictionary(Model model);
 
@@ -14,9 +16,9 @@ public interface DictionaryController {
 
     String getByValue(String value, Model model);
 
-    ModelAndView updateProperty(String key, String oldValue, String newValue);
+    ModelAndView updateProperty(RecordForUpdate record);
 
-    ModelAndView removeKey(String key);
+    ModelAndView removeKey(PropertyKey key);
 
-    ModelAndView removeProperty(String key, String value);
+    ModelAndView removeProperty(OneValueRecord record);
 }

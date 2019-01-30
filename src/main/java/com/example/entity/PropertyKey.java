@@ -23,6 +23,7 @@ public class PropertyKey implements Key {
     private List<PropertyValue> values;
 
     @Column(nullable = false)
+    @JsonIgnore
     private int type = -1;
 
     public PropertyKey(String key, int type) {

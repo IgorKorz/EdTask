@@ -1,12 +1,14 @@
 package com.example.controller;
 
-import com.example.model.DictionaryRecord;
+import com.example.entity.PropertyKey;
+import com.example.controller.utility.OneValueRecord;
 import com.example.model.Property;
+import com.example.controller.utility.RecordForUpdate;
 
 import java.util.List;
 
 public interface DictionaryRestController {
-    Property putProperty(DictionaryRecord property);
+    Property putProperty(OneValueRecord record);
 
     List<Property> getDictionary();
 
@@ -14,7 +16,9 @@ public interface DictionaryRestController {
 
     List<Property> getByValue(String value);
 
-    Property updateProperty(DictionaryRecord property);
+    Property updateProperty(RecordForUpdate record);
 
-    Property removeProperty(DictionaryRecord property);
+    Property removeKey(PropertyKey key);
+
+    Property removeProperty(OneValueRecord record);
 }

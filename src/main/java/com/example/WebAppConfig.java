@@ -62,7 +62,7 @@ public class WebAppConfig {
 
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL95Dialect");
-        hibernateProperties.setProperty("show_sql", "false");
+        hibernateProperties.setProperty("show_sql", "true");
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
 
         localSessionFactory.setHibernateProperties(hibernateProperties);

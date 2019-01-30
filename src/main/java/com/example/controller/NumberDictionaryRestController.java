@@ -1,9 +1,11 @@
 package com.example.controller;
 
 import com.example.dao.Dictionary;
-import com.example.model.DictionaryRecord;
+import com.example.entity.PropertyKey;
+import com.example.controller.utility.OneValueRecord;
 import com.example.model.Property;
 
+import com.example.controller.utility.RecordForUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,8 @@ public class NumberDictionaryRestController implements DictionaryRestController 
 
     @Override
     @PostMapping("/records")
-    public Property putProperty(@RequestBody DictionaryRecord property) {
-        return dictionary.put(property.getKey(), property.getValues().get(0));
+    public Property putProperty(@RequestBody OneValueRecord record) {
+        return dictionary.put(record.getKey(), record.getValue());
     }
 
     @Override
@@ -46,16 +48,18 @@ public class NumberDictionaryRestController implements DictionaryRestController 
 
     @Override
     @PutMapping("/records")
-    public Property updateProperty(@RequestBody DictionaryRecord property) {
-        return dictionary.update(property.getKey(), property.getValues().get(0), property.getValues().get(1));
+    public Property updateProperty(@RequestBody RecordForUpdate record) {
+        return dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue());
     }
 
     @Override
-    @DeleteMapping("/records")
-    public Property removeProperty(@RequestBody DictionaryRecord property) {
-        if (property.getValues() == null || property.getValues().isEmpty())
-            return dictionary.removeAll(property.getKey());
-        else
-            return dictionary.remove(property.getKey(), property.getValues().get(0));
+    public Property removeKey(@RequestBody PropertyKey key) {
+        return dictionary.removeAll(key.getKey());
+    }
+
+    @Override
+    @DeleteMapping("/records/keys")
+    public Property removeProperty(@RequestBody OneValueRecord record) {
+        return dictionary.remove(record.getKey(), record.getValue());
     }
 }

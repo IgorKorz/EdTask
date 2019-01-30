@@ -54,16 +54,6 @@ public class DictionaryRecord implements Property {
     }
 
     @Override
-    public void setValues(List<String> values) {
-        this.values = values;
-    }
-
-    public void setValues(String value) {
-        values = new LinkedList<>();
-        values.add(value);
-    }
-
-    @Override
     public void addValue(String value) {
         values.add(value);
     }

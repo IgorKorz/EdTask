@@ -13,7 +13,5 @@ public interface Property {
 
     List<String> getValues();
 
-    void setValues(List<String> values);
-
     void addValue(String value);
 }

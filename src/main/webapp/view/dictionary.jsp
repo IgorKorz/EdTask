@@ -1,15 +1,3 @@
-<%@ page import="org.springframework.http.HttpRequest" %>
-<%@ page import="java.net.URI" %>
-<%@ page import="org.springframework.http.HttpHeaders" %>
-<%@ page import="org.springframework.web.multipart.support.RequestPartServletServerHttpRequest" %>
-<%@ page import="com.sun.deploy.net.HttpResponse" %>
-<%@ page import="java.net.URL" %>
-<%@ page import="java.io.BufferedInputStream" %>
-<%@ page import="com.sun.deploy.net.MessageHeader" %>
-<%@ page import="java.net.URLConnection" %>
-<%@ page import="java.net.HttpURLConnection" %>
-<%@ page import="java.io.InputStream" %>
-<%@ page import="java.util.Scanner" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--@elvariable id="nameDictionary" type="java.lang.String"--%>
@@ -21,29 +9,10 @@
 <%--<script type="text/javascript" src="<c:url value="../js/requests.js"/>"></script>--%>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
-    function removeKey(key) {
-        $.ajax({
-            method: 'DELETE',
-            url: '/world-dictionary/records?key=' + key,
-            success: function () {
-                alert("Key removed");
-            }
-        });
-    }
-
-    function removeRecord(key, value) {
-        $.ajax({
-            method: 'DELETE',
-            url: '/world-dictionary/records',
-            data: { key: key, value: value },
-            success: function () {
-                alert("Key removed");
-            }
-        });
-    }
-
-    function putRecord(key, value) {
-        var record = { key: key, values: value };
+    function putRecord() {
+        var key = document.getElementById("putKey").value;
+        var value = document.getElementById("putValue").value;
+        var record = { key: key, value: value };
 
         $.ajax({
             type: 'POST',
@@ -51,7 +20,54 @@
             url:'/word-dictionary/records',
             data: JSON.stringify(record),
             dataType: "json"
-        })
+        });
+
+        location.reload();
+    }
+
+    function updateRecord() {
+        var key = document.getElementById("updateKey").value;
+        var oldValue = document.getElementById("updateValue").value;
+        var newValue = document.getElementById("updateNewValue").value;
+        var record = { key: key, oldValue: oldValue, newValue: newValue };
+
+        $.ajax({
+            type: 'PUT',
+            contentType : "application/json",
+            url:'/word-dictionary/records',
+            data: JSON.stringify(record),
+            dataType: "json"
+        });
+
+        location.reload();
+    }
+
+    function removeKey(key) {
+        var removedKey = { key: key };
+
+        $.ajax({
+            type: 'DELETE',
+            contentType : "application/json",
+            url:'/word-dictionary/records/keys',
+            data: JSON.stringify(removedKey),
+            dataType: "json"
+        });
+
+        location.reload();
+    }
+
+    function removeRecord(key, value) {
+        var record = { key: key, value: value };
+
+        $.ajax({
+            type: 'DELETE',
+            contentType : "application/json",
+            url:'/word-dictionary/records',
+            data: JSON.stringify(record),
+            dataType: "json"
+        });
+
+        location.reload();
     }
 </script>
 
@@ -69,21 +85,40 @@
         </c:forEach>
     </ul>
 </ul>
-<button onclick="putRecord('test', 'test')">Put</button>
-<%
-    URL url = new URL(request.getContextPath() + "/values/test");
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
-    connection.connect();
 
-    InputStream stream = connection.getInputStream();
-    Scanner scanner = new Scanner(stream);
-
-    JspWriter a;
-
-    while (scanner.hasNext()) {
-        out.println()
-    }
-%>
+<table>
+    <tr>
+        <td>Put record to dictionary</td>
+    </tr>
+    <tr>
+        <td>Key</td>
+        <td>Value</td>
+    </tr>
+    <tr>
+        <td><input id="putKey" name="key" type="text" value=""></td>
+        <td><input id="putValue" name="value" type="text" value=""></td>
+    </tr>
+    <tr>
+        <td><button onclick="putRecord()">Put</button></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>Update dictionary record</td>
+    </tr>
+    <tr>
+        <td>Key</td>
+        <td>Value</td>
+        <td>New value</td>
+    </tr>
+    <tr>
+        <td><input id="updateKey" name="key" type="text" value=""></td>
+        <td><input id="updateValue" name="value" type="text" value=""></td>
+        <td><input id="updateNewValue" name="newValue" type="text" value=""></td>
+    </tr>
+    <tr>
+        <td><button onclick="updateRecord()">Update</button></td>
+    </tr>
+</table>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package com.example.controller;
 
 import com.example.dao.Dictionary;
-import com.example.model.DictionaryRecord;
+import com.example.entity.PropertyKey;
+import com.example.controller.utility.OneValueRecord;
+import com.example.controller.utility.RecordForUpdate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/word-dictionary")
 public class WordDictionaryController implements DictionaryController {
     private final Dictionary dictionary;
+    private final String controllerPath = "/word-dictionary";
 
     @Autowired
     public WordDictionaryController(@Qualifier("wordDictionary") Dictionary dictionary) {
@@ -22,9 +25,9 @@ public class WordDictionaryController implements DictionaryController {
 
     @Override
     @PostMapping("/records")
-    public ModelAndView putProperty(@RequestBody DictionaryRecord property) {
-        ModelAndView view = new ModelAndView("redirect:/word-dictionary");
-        view.addObject("response", dictionary.put(property.getKey(), property.getValues().get(0)));
+    public ModelAndView putProperty(@RequestBody OneValueRecord record) {
+        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
+        view.addObject("response", dictionary.put(record.getKey(), record.getValue()));
 
         return view;
     }
@@ -33,6 +36,7 @@ public class WordDictionaryController implements DictionaryController {
     @GetMapping
     public String getDictionary(Model model) {
         model.addAttribute("dictionary", dictionary.getDictionary());
+        model.addAttribute("nameDictionary", dictionary.getName());
 
         return "dictionary";
     }
@@ -41,6 +45,7 @@ public class WordDictionaryController implements DictionaryController {
     @GetMapping("/values/{key}")
     public String getByKey(@PathVariable String key, Model model) {
         model.addAttribute("dictionary", dictionary.get(key));
+        model.addAttribute("nameDictionary", dictionary.getName());
 
         return "dictionary";
     }
@@ -49,37 +54,36 @@ public class WordDictionaryController implements DictionaryController {
     @GetMapping("/keys/{value}")
     public String getByValue(@PathVariable String value, Model model) {
         model.addAttribute("dictionary", dictionary.getKeys(value));
+        model.addAttribute("nameDictionary", dictionary.getName());
 
         return "dictionary";
     }
 
     @Override
-    @PutMapping(value = "/records", params = { "key", "oldValue", "newValue" })
-    public ModelAndView updateProperty(@RequestParam String key,
-                                       @RequestParam String oldValue,
-                                       @RequestParam String newValue) {
-        ModelAndView view = new ModelAndView("redirect:/word-dictionary");
-        view.addObject("response", dictionary.update(key, oldValue, newValue));
+    @PutMapping("/records")
+    public ModelAndView updateProperty(@RequestBody RecordForUpdate record) {
+        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
+        view.addObject("response",
+                dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue()));
 
         return view;
     }
 
     @Override
-    @DeleteMapping(value = "/records", params = "key")
+    @DeleteMapping("/records/keys")
     @ResponseBody
-    public ModelAndView removeKey(@RequestParam String key) {
-        ModelAndView view = new ModelAndView("redirect:/word-dictionary");
-        view.addObject("response", dictionary.removeAll(key));
+    public ModelAndView removeKey(@RequestBody PropertyKey key) {
+        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
+        view.addObject("response", dictionary.removeAll(key.getKey()));
 
         return view;
     }
 
     @Override
-    @DeleteMapping(value = "/records", params = { "key", "value" })
-    public ModelAndView removeProperty(@RequestParam String key,
-                                       @RequestParam String value) {
-        ModelAndView view = new ModelAndView("redirect:/word-dictionary");
-        view.addObject("response", dictionary.remove(key, value));
+    @DeleteMapping("/records")
+    public ModelAndView removeProperty(@RequestBody OneValueRecord record) {
+        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
+        view.addObject("response", dictionary.remove(record.getKey(), record.getValue()));
 
         return view;
     }

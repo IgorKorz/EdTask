@@ -45,7 +45,11 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property put(String key, String value) {
+    public synchronized Property put(String key, String value) {
+        if (!checker.isValidKey(key)) return checker.getResult();
+
+        if (!checker.isValidValue(value)) return checker.getResult();
+
         if (checker.contains(key, value)) return checker.result(200, key, value);
 
         Session session = sessionFactory.getCurrentSession();
@@ -81,17 +85,17 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
     @Override
-    public List<Property> getDictionary() {
+    public synchronized List<Property> getDictionary() {
         return new LinkedList<>(dictionary);
     }
 
     @Override
-    public List<Property> get(String key) {
+    public synchronized List<Property> get(String key) {
         if (!checker.containsKey(key)) return Collections.singletonList(checker.getResult());
 
         List<Property> propertyList = new LinkedList<>();
@@ -107,7 +111,7 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public List<Property> getKeys(String value) {
+    public synchronized List<Property> getKeys(String value) {
         if (!checker.containsValue(value)) return Collections.singletonList(checker.getResult());
 
         List<Property> propertyList = new LinkedList<>();
@@ -126,8 +130,17 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property update(String key, String oldValue, String newValue) {
+    public synchronized Property update(String key, String oldValue, String newValue) {
+        if (!checker.isValidKey(key) || !checker.isValidValue(oldValue) || !checker.isValidValue(newValue))
+            return checker.getResult();
+
         if (!checker.contains(key, oldValue)) return checker.getResult();
+
+        if (checker.contains(key, newValue)) {
+            checker.getResult().setId(400);
+
+            return checker.getResult();
+        }
 
         Session session = sessionFactory.getCurrentSession();
         Value propertyValue = session
@@ -160,7 +173,7 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property removeAll(String key) {
+    public synchronized Property removeAll(String key) {
         if (!checker.containsKey(key)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
@@ -182,7 +195,7 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property remove(String key, String value) {
+    public synchronized Property remove(String key, String value) {
         if (!checker.contains(key, value)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
@@ -209,7 +222,7 @@ public class DBProperties implements Dictionary {
         return checker.result(200, key, value);
     }
 
-    private void initDictionary() {
+    private synchronized void initDictionary() {
         Session session;
 
         try {
@@ -224,7 +237,7 @@ public class DBProperties implements Dictionary {
                 .setParameter("type", type)
                 .getResultList();
 
-        dictionary = new LinkedList<>();
+        dictionary = Collections.synchronizedList(new LinkedList<>());
 
         for (Key key : keyList) {
             dictionary.add(new DictionaryRecord(key));
