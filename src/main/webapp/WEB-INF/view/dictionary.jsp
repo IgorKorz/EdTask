@@ -1,3 +1,7 @@
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.Enumeration" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.LinkedList" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%--@elvariable id="nameDictionary" type="java.lang.String"--%>
@@ -26,7 +30,6 @@
         </c:forEach>
     </ul>
 </ul>
-
 <table>
     <tr>
         <td>Put record to dictionary</td>
@@ -72,7 +75,7 @@
         <td><input id="findKey" name="key" type="text" value=""></td>
     </tr>
     <tr>
-        <td><button onclick="findByKey()">find</button></td>
+        <td><button onclick="findByKey()">Search</button></td>
     </tr>
 </table>
 <table>
@@ -86,7 +89,7 @@
         <td><input id="findValue" name="key" type="text" value=""></td>
     </tr>
     <tr>
-        <td><button onclick="findByValue()">find</button></td>
+        <td><button onclick="findByValue()">Search</button></td>
     </tr>
 </table>
 </body>

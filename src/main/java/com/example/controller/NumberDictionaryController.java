@@ -8,13 +8,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/number-dictionary")
 public class NumberDictionaryController implements DictionaryController {
     private final Dictionary dictionary;
-    private final String controllerPath = "/number-dictionary";
 
     @Autowired
     public NumberDictionaryController(@Qualifier("numberDictionary") Dictionary dictionary) {
@@ -23,11 +21,10 @@ public class NumberDictionaryController implements DictionaryController {
 
     @Override
     @PostMapping("/records")
-    public ModelAndView putProperty(@RequestBody OneValueRecord record) {
-        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response", dictionary.put(record.getKey(), record.getValue()));
+    public String putProperty(@RequestBody OneValueRecord record, Model model) {
+        model.addAttribute("response", dictionary.put(record.getKey(), record.getValue()));
 
-        return view;
+        return "dictionary";
     }
 
     @Override
@@ -44,8 +41,9 @@ public class NumberDictionaryController implements DictionaryController {
     public String getByKey(@PathVariable String key, Model model) {
         model.addAttribute("dictionary", dictionary.get(key));
         model.addAttribute("nameDictionary", dictionary.getName());
+        model.addAttribute("toDictionary", "/word-dictionary");
 
-        return "dictionary";
+        return "search";
     }
 
     @Override
@@ -53,35 +51,33 @@ public class NumberDictionaryController implements DictionaryController {
     public String getByValue(@PathVariable String value, Model model) {
         model.addAttribute("dictionary", dictionary.getKeys(value));
         model.addAttribute("nameDictionary", dictionary.getName());
+        model.addAttribute("toDictionary", "/word-dictionary");
+
+        return "search";
+    }
+
+    @Override
+    @PutMapping("/records")
+    public String updateProperty(@RequestBody RecordForUpdate record, Model model) {
+        model.addAttribute(
+                "response",
+                dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue()));
+        return "dictionary";
+    }
+
+    @Override
+    @DeleteMapping("/records/keys")
+    public String removeKey(@RequestBody Key key) {
+        dictionary.remove(key.getKey());
 
         return "dictionary";
     }
 
     @Override
-    @PutMapping("/records")
-    public ModelAndView updateProperty(@RequestBody RecordForUpdate record) {
-        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response",
-                dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue()));
-
-        return view;
-    }
-
-    @Override
-    @DeleteMapping("/records/keys")
-    public ModelAndView removeKey(@RequestBody Key key) {
-        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response", dictionary.remove(key.getKey()));
-
-        return view;
-    }
-
-    @Override
     @DeleteMapping("/records")
-    public ModelAndView removeProperty(@RequestBody OneValueRecord record) {
-        ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response", dictionary.removeRecord(record.getKey(), record.getValue()));
+    public String removeProperty(@RequestBody OneValueRecord record) {
+        dictionary.removeRecord(record.getKey(), record.getValue());
 
-        return view;
+        return "dictionary";
     }
 }

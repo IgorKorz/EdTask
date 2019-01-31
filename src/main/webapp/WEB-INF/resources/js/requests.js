@@ -16,38 +16,22 @@ function putRecord() {
 
 function findByKey() {
     var key = document.getElementById("findKey").value;
-    var loca = location.href;
 
     $.ajax({
         type: 'GET',
         contentType: 'text/html',
-        url: location.href += 'values/' + key
+        url: location.href += '/values/' + key
     });
-
-    var toBack = document.createElement("a");
-    toBack.innerHTML = "Back to dictionary";
-    toBack.setAttribute("href", loca);
-
-    var body = document.getElementById("body");
-    document.body.insertBefore(toBack, body);
 }
 
 function findByValue() {
     var value = document.getElementById("findValue").value;
-    var loca = location.href;
 
     $.ajax({
         type: 'GET',
         contentType: 'text/html',
-        url: location.href += 'keys/' + value
+        url: location.href += '/keys/' + value
     });
-
-    var toBack = document.createElement("a");
-    toBack.innerHTML = "Back to dictionary";
-    toBack.setAttribute("href", loca);
-
-    var body = document.getElementById("body");
-    document.body.insertBefore(toBack, body);
 }
 
 function updateRecord() {

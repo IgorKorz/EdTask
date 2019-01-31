@@ -3,10 +3,9 @@ package com.example.controller;
 import com.example.controller.utility.*;
 
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.ModelAndView;
 
 public interface DictionaryController {
-    ModelAndView putProperty(OneValueRecord record);
+    String putProperty(OneValueRecord record, Model model);
 
     String getDictionary(Model model);
 
@@ -14,9 +13,9 @@ public interface DictionaryController {
 
     String getByValue(String value, Model model);
 
-    ModelAndView updateProperty(RecordForUpdate record);
+    String updateProperty(RecordForUpdate record, Model model);
 
-    ModelAndView removeKey(Key key);
+    String removeKey(Key key);
 
-    ModelAndView removeProperty(OneValueRecord record);
+    String removeProperty(OneValueRecord record);
 }

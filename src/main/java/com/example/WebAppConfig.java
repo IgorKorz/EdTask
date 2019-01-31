@@ -110,14 +110,14 @@ public class WebAppConfig implements WebMvcConfigurer {
     @Bean
     public Dictionary wordDictionary(SessionFactory sessionFactory) {
         return new DBProperties(
-                sessionFactory, 4, "[a-zA-Z]", "Word Dictionary", 0);
+                sessionFactory, 4, "[a-zA-Z]", "Word dictionary", 0);
     }
 
     @Autowired
     @Bean
     public Dictionary numberDictionary(SessionFactory sessionFactory) {
         return new DBProperties(
-                sessionFactory, 5, "[0-9]", "Number Dictionary", 1);
+                sessionFactory, 5, "[0-9]", "Number dictionary", 1);
     }
 
     @Bean
