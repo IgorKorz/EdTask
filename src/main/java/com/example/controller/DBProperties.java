@@ -42,11 +42,11 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property put(String key, String value) {
-        if (!checker.isValidKey(key)) return checker.getResult();
+    public synchronized Property put(String key, String value) {
+        if (!checker.isValidKey(key) || !checker.isValidValue(value))
+            return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
-
         Property record;
 
         if (checker.containsKey(key))
@@ -70,18 +70,17 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public Property get(String key) {
+    public synchronized Property get(String key) {
         if (!checker.containsKey(key)) return checker.getResult();
 
         return dictionary.get((int) checker.getResult().getId());
     }
 
     @Override
-    public Property remove(String key) {
+    public synchronized Property remove(String key) {
         if (!checker.containsKey(key)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
-
         Property record = dictionary.remove((int) checker.getResult().getId());
 
         session.delete(record);

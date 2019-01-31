@@ -26,6 +26,14 @@ public class ValidChecker implements Checker {
 
     @Override
     public boolean isValidKey(String key) {
+        if (isEmpty(key)) {
+            result.setId(-1);
+            result.setKey("fail");
+            result.setValue("Empty key!");
+
+            return false;
+        }
+
         if (!isInvalidKey(key)) {
             result.setKey("success");
 
@@ -34,11 +42,24 @@ public class ValidChecker implements Checker {
 
         result.setId(-1);
         result.setKey("fail");
-        result.setValue(key.length() != lengthKey ? "Key is too short!"
-                : key.length() > lengthKey ? "Key is too long!"
+        result.setValue(key.length() != lengthKey
+                ? "Key's length must be " + lengthKey + " symbols!"
                 : "Key does not match the restrictions!");
 
         return false;
+    }
+
+    @Override
+    public boolean isValidValue(String value) {
+        if (isEmpty(value)) {
+            result.setId(-1);
+            result.setKey("fail");
+            result.setValue("Empty value!");
+
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -62,5 +83,9 @@ public class ValidChecker implements Checker {
 
     private boolean isInvalidKey(String key) {
         return !key.matches(regexpKey);
+    }
+
+    private boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 }

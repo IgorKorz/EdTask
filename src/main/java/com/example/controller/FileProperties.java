@@ -15,14 +15,16 @@ import java.io.IOException;
 
 public class FileProperties implements Dictionary {
     private String name;
-    private Checker checker;
     private Path source;
     private List<Property> dictionary;
+    private Checker checker;
 
     public FileProperties(String filePath, int keyLength, String keySymbols, String name) {
         this.name = name;
+
         initSource(filePath);
         initDictionary();
+
         this.checker = new ValidChecker(dictionary, keyLength, keySymbols);
     }
 
@@ -38,20 +40,21 @@ public class FileProperties implements Dictionary {
 
     @Override
     public Property put(String key, String value) {
-        if (!checker.isValidKey(key)) return checker.getResult();
+        if (!checker.isValidKey(key) || !checker.isValidValue(value))
+            return checker.getResult();
 
         Property record;
 
         if (checker.containsKey(key)) {
             record = dictionary.get((int) checker.getResult().getId());
-            record.setValue(value);
         } else {
             record = new DictionaryRecord();
             record.setKey(key);
-            record.setValue(value);
 
             dictionary.add(record);
         }
+
+        record.setValue(value);
 
         writeToFile();
 
@@ -85,22 +88,19 @@ public class FileProperties implements Dictionary {
             List<String> lines = Files.readAllLines(source, StandardCharsets.UTF_8);
 
             for (String line : lines) {
-                String[] keyValue = line.split("=");
-                DictionaryRecord record = new DictionaryRecord();
-                record.setKey(keyValue[0]);
-                record.setValue(keyValue[1]);
+                String[] keyValueType = line.split("=");
+                Property record = new DictionaryRecord();
+                record.setKey(keyValueType[0]);
+                record.setValue(keyValueType[1]);
+
+                try {
+                    record.setType(Integer.parseInt(keyValueType[2]));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid type-number for " + record.toString());
+                }
 
                 dictionary.add(record);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeToFile() {
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
-            for (Property record : dictionary)
-                bufferedWriter.write(record.getKey() + "=" + record.getValue() + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,6 +113,15 @@ public class FileProperties implements Dictionary {
             source = Files.createFile(source);
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void writeToFile() {
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(source)) {
+            for (Property record : dictionary)
+                bufferedWriter.write(record.getKey() + "=" + record.getValue() + "=" + record.getType() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
