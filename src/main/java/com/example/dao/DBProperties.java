@@ -9,7 +9,6 @@ import com.example.model.DictionaryRecord;
 import com.example.model.Property;
 import com.example.model.ValidChecker;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -172,7 +171,7 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public synchronized Property removeAll(String key) {
+    public synchronized Property remove(String key) {
         if (!checker.containsKey(key)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();
@@ -194,7 +193,7 @@ public class DBProperties implements Dictionary {
     }
 
     @Override
-    public synchronized Property remove(String key, String value) {
+    public synchronized Property removeRecord(String key, String value) {
         if (!checker.contains(key, value)) return checker.getResult();
 
         Session session = sessionFactory.getCurrentSession();

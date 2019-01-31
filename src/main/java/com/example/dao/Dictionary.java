@@ -17,7 +17,7 @@ public interface Dictionary {
 
     Property update(String key, String oldValue, String newValue);
 
-    Property remove(String key, String value);
+    Property remove(String key);
 
-    Property removeAll(String key);
+    Property removeRecord(String key, String value);
 }

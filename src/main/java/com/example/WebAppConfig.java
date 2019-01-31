@@ -1,6 +1,7 @@
 package com.example;
 
-import com.example.dao.*;
+import com.example.dao.DBProperties;
+import com.example.dao.Dictionary;
 import com.example.entity.PropertyKey;
 import com.example.entity.PropertyValue;
 
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;

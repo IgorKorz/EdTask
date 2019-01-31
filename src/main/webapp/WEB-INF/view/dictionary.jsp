@@ -32,8 +32,8 @@
         <td>Put record to dictionary</td>
     </tr>
     <tr>
-        <td>Key</td>
-        <td>Value</td>
+        <th>Key</th>
+        <th>Value</th>
     </tr>
     <tr>
         <td><input id="putKey" name="key" type="text" value=""></td>
@@ -48,9 +48,9 @@
         <td>Update dictionary record</td>
     </tr>
     <tr>
-        <td>Key</td>
-        <td>Value</td>
-        <td>New value</td>
+        <th>Key</th>
+        <th>Value</th>
+        <th>New value</th>
     </tr>
     <tr>
         <td><input id="updateKey" name="key" type="text" value=""></td>
@@ -59,6 +59,34 @@
     </tr>
     <tr>
         <td><button onclick="updateRecord()">Update</button></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>Search by key</td>
+    </tr>
+    <tr>
+        <th>Key</th>
+    </tr>
+    <tr>
+        <td><input id="findKey" name="key" type="text" value=""></td>
+    </tr>
+    <tr>
+        <td><button onclick="findByKey()">find</button></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>Search by value</td>
+    </tr>
+    <tr>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td><input id="findValue" name="key" type="text" value=""></td>
+    </tr>
+    <tr>
+        <td><button onclick="findByValue()">find</button></td>
     </tr>
 </table>
 </body>

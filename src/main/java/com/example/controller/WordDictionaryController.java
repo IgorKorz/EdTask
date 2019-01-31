@@ -69,10 +69,9 @@ public class WordDictionaryController implements DictionaryController {
 
     @Override
     @DeleteMapping("/records/keys")
-    @ResponseBody
     public ModelAndView removeKey(@RequestBody Key key) {
         ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response", dictionary.removeAll(key.getKey()));
+        view.addObject("response", dictionary.remove(key.getKey()));
 
         return view;
     }
@@ -81,7 +80,7 @@ public class WordDictionaryController implements DictionaryController {
     @DeleteMapping("/records")
     public ModelAndView removeProperty(@RequestBody OneValueRecord record) {
         ModelAndView view = new ModelAndView("redirect:" + controllerPath);
-        view.addObject("response", dictionary.remove(record.getKey(), record.getValue()));
+        view.addObject("response", dictionary.removeRecord(record.getKey(), record.getValue()));
 
         return view;
     }

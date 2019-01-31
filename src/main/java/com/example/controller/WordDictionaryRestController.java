@@ -52,12 +52,12 @@ public class WordDictionaryRestController implements DictionaryRestController {
 
     @Override
     public Property removeKey(@RequestBody Key key) {
-        return dictionary.removeAll(key.getKey());
+        return dictionary.remove(key.getKey());
     }
 
     @Override
     @DeleteMapping("/records/keys")
     public Property removeProperty(@RequestBody OneValueRecord record) {
-        return dictionary.remove(record.getKey(), record.getValue());
+        return dictionary.removeRecord(record.getKey(), record.getValue());
     }
 }

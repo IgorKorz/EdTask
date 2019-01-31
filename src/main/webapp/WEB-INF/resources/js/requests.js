@@ -5,13 +5,49 @@ function putRecord() {
 
     $.ajax({
         type: 'POST',
-        contentType : "application/json",
-        url:'/word-dictionary/records',
+        contentType: 'application/json',
+        url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: "json"
+        dataType: 'json'
     });
 
     location.reload();
+}
+
+function findByKey() {
+    var key = document.getElementById("findKey").value;
+    var loca = location.href;
+
+    $.ajax({
+        type: 'GET',
+        contentType: 'text/html',
+        url: location.href += 'values/' + key
+    });
+
+    var toBack = document.createElement("a");
+    toBack.innerHTML = "Back to dictionary";
+    toBack.setAttribute("href", loca);
+
+    var body = document.getElementById("body");
+    document.body.insertBefore(toBack, body);
+}
+
+function findByValue() {
+    var value = document.getElementById("findValue").value;
+    var loca = location.href;
+
+    $.ajax({
+        type: 'GET',
+        contentType: 'text/html',
+        url: location.href += 'keys/' + value
+    });
+
+    var toBack = document.createElement("a");
+    toBack.innerHTML = "Back to dictionary";
+    toBack.setAttribute("href", loca);
+
+    var body = document.getElementById("body");
+    document.body.insertBefore(toBack, body);
 }
 
 function updateRecord() {
@@ -22,10 +58,10 @@ function updateRecord() {
 
     $.ajax({
         type: 'PUT',
-        contentType : "application/json",
-        url:'/word-dictionary/records',
+        contentType: 'application/json',
+        url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: "json"
+        dataType: 'json'
     });
 
     location.reload();
@@ -36,10 +72,10 @@ function removeKey(key) {
 
     $.ajax({
         type: 'DELETE',
-        contentType : "application/json",
-        url:'/word-dictionary/records/keys',
+        contentType: 'application/json',
+        url: location.href + '/records/keys',
         data: JSON.stringify(removedKey),
-        dataType: "json"
+        dataType: 'json'
     });
 
     location.reload();
@@ -50,10 +86,10 @@ function removeRecord(key, value) {
 
     $.ajax({
         type: 'DELETE',
-        contentType : "application/json",
-        url:'/word-dictionary/records',
+        contentType: 'application/json',
+        url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: "json"
+        dataType: 'json'
     });
 
     location.reload();
