@@ -1,17 +1,12 @@
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.Enumeration" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.LinkedList" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%--@elvariable id="nameDictionary" type="java.lang.String"--%>
-<%--@elvariable id="dictionary" type="java.util.Map"--%>
 <html>
 <head>
     <title>${nameDictionary}</title>
 </head>
 <%--<script type="text/javascript" src="<c:url value="../js/requests.js"/>"></script>--%>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script>
     <%@include file="../resources/js/requests.js"%>
 </script>
@@ -20,6 +15,7 @@
 <ul>
     ${nameDictionary}
     <ul>
+        <%--@elvariable id="dictionary" type="java.util.List"--%>
         <c:forEach items="${dictionary}" var="property">
             <li>${property.key} <button onclick="removeKey('${property.key}')">remove</button>
                 <ul>
@@ -92,5 +88,6 @@
         <td><button onclick="findByValue()">Search</button></td>
     </tr>
 </table>
+<a href="/">Back to dictionaries list</a>
 </body>
 </html>

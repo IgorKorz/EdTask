@@ -8,10 +8,14 @@ function putRecord() {
         contentType: 'application/json',
         url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: 'json'
+        dataType: 'text',
+        success: function (data) {
+            alert(data);
+            location.reload()
+        }
     });
 
-    location.reload();
+    //location.reload();
 }
 
 function findByKey() {
@@ -19,7 +23,6 @@ function findByKey() {
 
     $.ajax({
         type: 'GET',
-        contentType: 'text/html',
         url: location.href += '/values/' + key
     });
 }
@@ -29,7 +32,6 @@ function findByValue() {
 
     $.ajax({
         type: 'GET',
-        contentType: 'text/html',
         url: location.href += '/keys/' + value
     });
 }
@@ -45,10 +47,14 @@ function updateRecord() {
         contentType: 'application/json',
         url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: 'json'
+        dataType: 'text',
+        success: function (data) {
+            alert(data);
+            location.reload()
+        }
     });
 
-    location.reload();
+    //location.reload();
 }
 
 function removeKey(key) {
@@ -59,10 +65,14 @@ function removeKey(key) {
         contentType: 'application/json',
         url: location.href + '/records/keys',
         data: JSON.stringify(removedKey),
-        dataType: 'json'
+        dataType: 'text',
+        success: function (data) {
+            alert(data);
+            location.reload()
+        }
     });
 
-    location.reload();
+    //location.reload();
 }
 
 function removeRecord(key, value) {
@@ -73,8 +83,12 @@ function removeRecord(key, value) {
         contentType: 'application/json',
         url: location.href + '/records',
         data: JSON.stringify(record),
-        dataType: 'json'
+        dataType: 'text',
+        success: function (data) {
+            alert(data);
+            location.reload()
+        }
     });
 
-    location.reload();
+    //location.reload();
 }

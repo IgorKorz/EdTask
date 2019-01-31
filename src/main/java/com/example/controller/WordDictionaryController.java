@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.controller.utility.*;
 import com.example.dao.Dictionary;
 
+import com.example.model.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,15 @@ public class WordDictionaryController implements DictionaryController {
 
     @Override
     @PostMapping("/records")
-    public String putProperty(@RequestBody OneValueRecord record, Model model) {
-        model.addAttribute("response", dictionary.put(record.getKey(), record.getValue()));
+    @ResponseBody
+    public String putProperty(@RequestBody OneValueRecord record) {
+        Property property = dictionary.put(record.getKey(), record.getValue());
 
-        return "dictionary";
+        return property.getId() == 201
+                ? "Record " + record.getKey() + "=" + record.getValue() + " put"
+                : property.getId() == 200
+                ? "Record " + record.getKey() + "=" + record.getValue() + " already exists"
+                : property.getValues().get(0);
     }
 
     @Override
@@ -58,26 +64,35 @@ public class WordDictionaryController implements DictionaryController {
 
     @Override
     @PutMapping("/records")
-    public String updateProperty(@RequestBody RecordForUpdate record, Model model) {
-        model.addAttribute(
-                "response",
-                dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue()));
-        return "dictionary";
+    @ResponseBody
+    public String updateProperty(@RequestBody RecordForUpdate record) {
+        Property property = dictionary.update(record.getKey(), record.getOldValue(), record.getNewValue());
+
+        return property.getId() == 200
+                ? "Record " + record.getKey() + "=" + record.getOldValue() + " now "
+                + record.getKey() + "=" + record.getNewValue()
+                : property.getValues().get(0);
     }
 
     @Override
     @DeleteMapping("/records/keys")
+    @ResponseBody
     public String removeKey(@RequestBody Key key) {
-        dictionary.remove(key.getKey());
+        Property property = dictionary.remove(key.getKey());
 
-        return "dictionary";
+        return property.getId() == 200
+                ? "Key " + key.getKey() + " removed"
+                : property.getValues().get(0);
     }
 
     @Override
     @DeleteMapping("/records")
+    @ResponseBody
     public String removeProperty(@RequestBody OneValueRecord record) {
-        dictionary.removeRecord(record.getKey(), record.getValue());
+        Property property = dictionary.removeRecord(record.getKey(), record.getValue());
 
-        return "dictionary";
+        return property.getId() == 200
+                ? "Record " + record.getKey() + "=" + record.getValue() + " removed"
+                : property.getValues().get(0);
     }
 }

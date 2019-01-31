@@ -1,3 +1,5 @@
+<%--@elvariable id="toDictionary" type="java.lang.String"--%>
+<%--@elvariable id="nameDictionary" type="java.lang.String"--%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -8,6 +10,7 @@
 <ul>
     ${nameDictionary}
     <ul>
+        <%--@elvariable id="dictionary" type="java.util.List"--%>
         <c:forEach items="${dictionary}" var="property">
         <li>${property.key} <button onclick="removeKey('${property.key}')">remove</button>
             <ul>

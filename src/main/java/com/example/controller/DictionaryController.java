@@ -5,7 +5,7 @@ import com.example.controller.utility.*;
 import org.springframework.ui.Model;
 
 public interface DictionaryController {
-    String putProperty(OneValueRecord record, Model model);
+    String putProperty(OneValueRecord record);
 
     String getDictionary(Model model);
 
@@ -13,7 +13,7 @@ public interface DictionaryController {
 
     String getByValue(String value, Model model);
 
-    String updateProperty(RecordForUpdate record, Model model);
+    String updateProperty(RecordForUpdate record);
 
     String removeKey(Key key);
 
