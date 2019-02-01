@@ -2,8 +2,8 @@ package com.example.controller;
 
 import com.example.controller.utility.*;
 import com.example.dao.Dictionary;
-
 import com.example.model.Property;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;

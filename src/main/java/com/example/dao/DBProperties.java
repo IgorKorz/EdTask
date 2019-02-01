@@ -1,13 +1,7 @@
 package com.example.dao;
 
-import com.example.entity.Key;
-import com.example.entity.PropertyKey;
-import com.example.entity.PropertyValue;
-import com.example.entity.Value;
-import com.example.model.Checker;
-import com.example.model.DictionaryRecord;
-import com.example.model.Property;
-import com.example.model.ValidChecker;
+import com.example.entity.*;
+import com.example.model.*;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -35,7 +29,6 @@ public class DBProperties implements Dictionary {
         this.sessionFactory = sessionFactory;
         this.name = name;
         this.type = type;
-        this.dictionary = new LinkedList<>();
         initDictionary();
         this.checker = new ValidChecker(dictionary, keyLength, keySymbols);
     }
@@ -91,14 +84,19 @@ public class DBProperties implements Dictionary {
 
     @Override
     public synchronized List<Property> getDictionary() {
-        return new LinkedList<>(dictionary);
+        Collections.sort(dictionary);
+
+        for (Property property : dictionary)
+            Collections.sort(property.getValues());
+
+        return new ArrayList<>(dictionary);
     }
 
     @Override
     public synchronized List<Property> get(String key) {
         if (!checker.containsKey(key)) return Collections.singletonList(checker.getResult());
 
-        List<Property> propertyList = new LinkedList<>();
+        List<Property> propertyList = new ArrayList<>();
 
         for (int i = (int) checker.getResult().getId(); i < dictionary.size(); i++) {
             Property property = dictionary.get(i);
@@ -107,6 +105,11 @@ public class DBProperties implements Dictionary {
                 propertyList.add(property);
         }
 
+        Collections.sort(propertyList);
+
+        for (Property property : propertyList)
+            Collections.sort(property.getValues());
+
         return propertyList;
     }
 
@@ -114,17 +117,20 @@ public class DBProperties implements Dictionary {
     public synchronized List<Property> getKeys(String value) {
         if (!checker.containsValue(value)) return Collections.singletonList(checker.getResult());
 
-        List<Property> propertyList = new LinkedList<>();
+        List<Property> propertyList = new ArrayList<>();
 
         for (int i = (int) checker.getResult().getId(); i < dictionary.size(); i++) {
             Property property = dictionary.get(i);
 
-            for (String v : property.getValues()) {
-                if (v.equals(value)) {
+            for (String v : property.getValues())
+                if (v.equals(value))
                     propertyList.add(property);
-                }
-            }
         }
+
+        Collections.sort(propertyList);
+
+        for (Property property : propertyList)
+            Collections.sort(property.getValues());
 
         return propertyList;
     }
@@ -211,10 +217,13 @@ public class DBProperties implements Dictionary {
         for (int i = (int) checker.getResult().getId(); i < dictionary.size(); i++) {
             Property property = dictionary.get(i);
 
-            if (property.getKey().equals(key))
+            if (property.getKey().equals(key)) {
                 for (int j = 0; j < property.getValues().size(); j++)
                     if (property.getValues().get(j).equals(value))
                         property.getValues().remove(j);
+
+                break;
+            }
         }
 
         return checker.result(200, key, value);
@@ -229,7 +238,7 @@ public class DBProperties implements Dictionary {
                 .setParameter("type", type)
                 .getResultList();
 
-        dictionary = Collections.synchronizedList(new LinkedList<>());
+        dictionary = Collections.synchronizedList(new ArrayList<>());
 
         for (Key key : keyList) {
             dictionary.add(new DictionaryRecord(key));

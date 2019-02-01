@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "property_keys")
@@ -28,7 +27,7 @@ public class PropertyKey implements Key {
 
     public PropertyKey(String key, int type) {
         this.key = key;
-        this.values = new LinkedList<>();
+        this.values = new ArrayList<>();
         this.type = type;
     }
 
@@ -58,7 +57,15 @@ public class PropertyKey implements Key {
 
     @Override
     public List<Value> getValues() {
-        return new LinkedList<>(values);
+        return new ArrayList<>(values);
+    }
+
+    @Override
+    public void setValues(List<Value> values) {
+        this.values = new ArrayList<>();
+
+        for (Value value : values)
+            this.values.add((PropertyValue) value);
     }
 
     @Override

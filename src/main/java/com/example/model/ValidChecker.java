@@ -43,8 +43,8 @@ public class ValidChecker implements Checker {
 
         if (!isInvalidKey(key)) {
             result.setId(200);
-            result.setKey("success");
-            result.addValue("Key " + key + " is valid");
+            result.setKey(key);
+            result.addValue("");
 
             return true;
         }
@@ -76,8 +76,8 @@ public class ValidChecker implements Checker {
         for (int i = 0; i < dictionary.size(); i++) {
             if (dictionary.get(i).getKey().equals(key)) {
                 result.setId(i);
-                result.setKey("Search success");
-                result.addValue("Property with key " + key + " exists!");
+                result.setKey(key);
+                result.addValue("");
 
                 return true;
             }
@@ -96,8 +96,8 @@ public class ValidChecker implements Checker {
             for (String v : dictionary.get(i).getValues())
                 if (v.equals(value)) {
                     result.setId(i);
-                    result.setKey("Search success");
-                    result.addValue("Property with value " + value + " exists!");
+                    result.setKey("");
+                    result.addValue(value);
 
                     return true;
                 }
@@ -120,8 +120,8 @@ public class ValidChecker implements Checker {
                     for (String v : dictionary.get(i).getValues())
                         if (v.equals(value)) {
                             result.setId(i);
-                            result.setKey("Search success");
-                            result.addValue("Property with key " + key + " and value " + value + " exists!");
+                            result.setKey(key);
+                            result.addValue(value);
 
                             return true;
                         }
@@ -175,8 +175,18 @@ public class ValidChecker implements Checker {
         }
 
         @Override
+        public void setValues(List<String> values) {
+            if (values != null) value = values.get(0);
+        }
+
+        @Override
         public void addValue(String value) {
             this.value = value;
+        }
+
+        @Override
+        public int compareTo(Property o) {
+            return Long.compare(id, o.getId());
         }
     }
 }

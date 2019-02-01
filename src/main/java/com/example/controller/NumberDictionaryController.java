@@ -2,8 +2,8 @@ package com.example.controller;
 
 import com.example.controller.utility.*;
 import com.example.dao.Dictionary;
-
 import com.example.model.Property;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -28,6 +28,8 @@ public class NumberDictionaryController implements DictionaryController {
 
         return property.getId() == 201
                 ? "Record " + record.getKey() + "=" + record.getValue() + " put"
+                : property.getId() == 200
+                ? "Record " + record.getKey() + "=" + record.getValue() + " already exists"
                 : property.getValues().get(0);
     }
 

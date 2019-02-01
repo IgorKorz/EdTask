@@ -13,6 +13,8 @@ public interface Key {
 
     List<Value> getValues();
 
+    void setValues(List<Value> values);
+
     int getType();
 
     void setType(int type);

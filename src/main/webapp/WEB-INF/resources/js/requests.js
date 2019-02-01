@@ -14,8 +14,6 @@ function putRecord() {
             location.reload()
         }
     });
-
-    //location.reload();
 }
 
 function findByKey() {
@@ -53,8 +51,6 @@ function updateRecord() {
             location.reload()
         }
     });
-
-    //location.reload();
 }
 
 function removeKey(key) {
@@ -71,8 +67,6 @@ function removeKey(key) {
             location.reload()
         }
     });
-
-    //location.reload();
 }
 
 function removeRecord(key, value) {
@@ -89,6 +83,4 @@ function removeRecord(key, value) {
             location.reload()
         }
     });
-
-    //location.reload();
 }

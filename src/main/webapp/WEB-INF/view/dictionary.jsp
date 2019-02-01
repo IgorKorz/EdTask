@@ -5,11 +5,9 @@
 <head>
     <title>${nameDictionary}</title>
 </head>
-<%--<script type="text/javascript" src="<c:url value="../js/requests.js"/>"></script>--%>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script>
-    <%@include file="../resources/js/requests.js"%>
-</script>
+<%--<script src="<c:url value="../resources/js/requests.js"/>">Don't work</script>--%>
+<script><%@include file="../resources/js/requests.js"%></script>
 
 <body>
 <ul>

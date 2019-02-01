@@ -8,9 +8,11 @@ import com.example.entity.PropertyValue;
 import org.hibernate.SessionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -37,7 +39,9 @@ import java.util.Properties;
 @ComponentScan("com.example")
 @EnableTransactionManagement
 @EnableWebMvc
+@PropertySource("classpath:db.properties")
 public class WebAppConfig implements WebMvcConfigurer {
+
     @Bean
     public ViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -61,12 +65,17 @@ public class WebAppConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(
+            @Value("${db.driverClassName}") String driverClassName,
+            @Value("${db.url}") String url,
+            @Value("${db.username}") String username,
+            @Value("${db.password}") String password
+    ) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/TestDB");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("123");
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         return dataSource;
     }
