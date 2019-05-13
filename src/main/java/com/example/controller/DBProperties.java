@@ -5,7 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Transactional
@@ -29,7 +30,7 @@ public class DBProperties implements Dictionary {
     //region override
     @Override
     public synchronized List<Property> getDictionary() {
-        return new LinkedList<>(dictionary);
+        return new ArrayList<>(dictionary);
     }
 
     @Override
@@ -124,14 +125,14 @@ public class DBProperties implements Dictionary {
                     ")");
 
             try (ResultSet set = statement.executeQuery("SELECT * FROM public.dictionary WHERE type = " + type)) {
-                dictionary = new LinkedList<>();
+                dictionary = Collections.synchronizedList(new ArrayList<>());
 
                 while (set.next()) {
                     Property record = new DictionaryRecord();
-                    record.setId(set.getLong(0));
-                    record.setKey(set.getString(1));
-                    record.setValue(set.getString(2));
-                    record.setType(set.getInt(3));
+                    record.setId(set.getLong("id"));
+                    record.setKey(set.getString("key"));
+                    record.setValue(set.getString("value"));
+                    record.setType(set.getInt("type"));
 
                     dictionary.add(record);
                 }
