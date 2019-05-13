@@ -111,8 +111,13 @@ public class ConsoleMenu implements Menu {
     }
 
     private void putValue(Dictionary dictionary, String key, String value) {
-        if (checkAndWrite(dictionary.put(key, value)))
-            System.out.print(" put");
+        Property record = dictionary.put(key, value);
+
+        if (record.getId() > -1) {
+            System.out.println(record.toString() + " put");
+        } else {
+            System.out.println(record);
+        }
     }
 
     private void getValue(Dictionary dictionary, String key) {
@@ -120,8 +125,13 @@ public class ConsoleMenu implements Menu {
     }
 
     private void removeValue(Dictionary dictionary, String key) {
-        if (checkAndWrite(dictionary.remove(key)))
-            System.out.print(" removed");
+        Property record = dictionary.remove(key);
+
+        if (record.getId() > -1) {
+            System.out.println(record.toString() + " removed");
+        } else {
+            System.out.println(record);
+        }
     }
 
     private void printDictionariesList() {
@@ -132,18 +142,5 @@ public class ConsoleMenu implements Menu {
     private void clearConsole() {
         for (int i = 0; i < 50; i++)
             System.out.println();
-    }
-
-    private boolean checkAndWrite(Property property) {
-        if (property.getId() <= 0) {
-            System.out.println(property.getValue());
-
-            return false;
-        }
-        else {
-            System.out.println(property);
-
-            return true;
-        }
     }
 }

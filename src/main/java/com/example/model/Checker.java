@@ -7,5 +7,5 @@ public interface Checker {
 
     boolean isValidValue(String value);
 
-    boolean containsKey(String key);
+    int containsKey(String key);
 }

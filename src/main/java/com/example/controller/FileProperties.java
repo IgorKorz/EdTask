@@ -44,9 +44,10 @@ public class FileProperties implements Dictionary {
             return checker.getResult();
 
         Property record;
+        int recordPos = checker.containsKey(key);
 
-        if (checker.containsKey(key)) {
-            record = dictionary.get((int) checker.getResult().getId());
+        if (recordPos > -1) {
+            record = dictionary.get(recordPos);
         } else {
             record = new DictionaryRecord();
             record.setKey(key);
@@ -63,17 +64,21 @@ public class FileProperties implements Dictionary {
 
     @Override
     public Property get(String key) {
-        if (!checker.containsKey(key)) return checker.getResult();
+        int recordPos = checker.containsKey(key);
 
-        return dictionary.get((int) checker.getResult().getId());
+        if (recordPos == -1) return checker.getResult();
+
+        return dictionary.get(recordPos);
     }
 
     @Override
     public Property remove(String key) {
-        if (!checker.containsKey(key)) return checker.getResult();
+        int recordPos = checker.containsKey(key);
 
-        Property record = dictionary.get((int) checker.getResult().getId());
-        dictionary.remove((int) checker.getResult().getId());
+        if (recordPos == -1) return checker.getResult();
+
+        Property record = dictionary.get(recordPos);
+        dictionary.remove(recordPos);
 
         if (record != null)
             writeToFile();
