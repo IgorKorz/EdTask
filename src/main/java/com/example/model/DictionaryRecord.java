@@ -1,22 +1,17 @@
 package com.example.model;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "dictionary")
 public class DictionaryRecord implements Property {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(unique = true, nullable = false)
     private String key;
-
-    @Column(nullable = false)
     private String value;
-
-    @Column(nullable = false)
     private int type;
+
+    public DictionaryRecord(String key, String value, int type) {
+        this.key = key;
+        this.value = value;
+        this.type = type;
+    }
+    public DictionaryRecord() { }
 
     @Override
     public long getId() {

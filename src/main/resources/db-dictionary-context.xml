@@ -1,51 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5432/TestDB"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/postgres"/>
         <property name="username" value="postgres"/>
         <property name="password" value="123"/>
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="annotatedClasses">
-            <list>
-                <value>com.example.model.DictionaryRecord</value>
-            </list>
-        </property>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
-                <prop key="show_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-    <tx:annotation-driven/>
-
     <bean id="wordDictionary" class="com.example.controller.DBProperties">
-        <constructor-arg index="0" ref="sessionFactory"/>
+        <constructor-arg index="0" ref="dataSource"/>
         <constructor-arg index="1" value="4"/>
-        <constructor-arg index="2" value="[a-zA-Z]"/>
+        <constructor-arg index="2" value="[a-zA-Z]+"/>
         <constructor-arg index="3" value="Word Dictionary"/>
         <constructor-arg index="4" value="0"/>
     </bean>
 
     <bean id="numberDictionary" class="com.example.controller.DBProperties">
-        <constructor-arg index="0" ref="sessionFactory"/>
+        <constructor-arg index="0" ref="dataSource"/>
         <constructor-arg index="1" value="5"/>
-        <constructor-arg index="2" value="[0-9]"/>
+        <constructor-arg index="2" value="[0-9]+"/>
         <constructor-arg index="3" value="Number Dictionary"/>
         <constructor-arg index="4" value="1"/>
     </bean>
