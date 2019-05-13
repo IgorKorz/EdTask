@@ -1,27 +1,23 @@
 package com.example.controller;
 
-import com.example.model.Checker;
-import com.example.model.DictionaryRecord;
-import com.example.model.Property;
-import com.example.model.ValidChecker;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
+import com.example.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Transactional
 public class DBProperties implements Dictionary {
-    private SessionFactory sessionFactory;
+    private DataSource dataSource;
     private Checker checker;
     private String name;
     private int type;
     private List<Property> dictionary;
 
-    public DBProperties(SessionFactory sessionFactory, int keyLength, String keySymbols, String name, int type) {
-        this.sessionFactory = sessionFactory;
+    public DBProperties(DataSource dataSource, int keyLength, String keySymbols, String name, int type) {
+        this.dataSource = dataSource;
         this.name = name;
         this.type = type;
 
@@ -43,57 +39,105 @@ public class DBProperties implements Dictionary {
 
     @Override
     public synchronized Property put(String key, String value) {
-        if (!checker.isValidKey(key) || !checker.isValidValue(value))
-            return checker.getResult();
+        if (!checker.isValidKey(key)) return checker.getResult();
 
-        Session session = sessionFactory.getCurrentSession();
+        if (!checker.isValidValue(value)) return checker.getResult();
+
+        int recordPos = checker.containsKey(key);
+        String sql = recordPos > -1
+                ? "UPDATE public.dictionary SET value = ? WHERE key = ?"
+                : "INSERT INTO public.dictionary (key, value, type) VALUES (?, ?, ?)";
         Property record;
 
-        if (checker.containsKey(key))
-            record = dictionary.get((int) checker.getResult().getId());
-        else {
-            record = new DictionaryRecord();
-            record.setKey(key);
-            record.setType(type);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            if (recordPos > -1) {
+                record = dictionary.get(recordPos);
+                record.setValue(value);
+
+                statement.setString(1, value);
+                statement.setString(2, key);
+                statement.executeUpdate();
+            } else {
+                record = new DictionaryRecord(key, value, type);
+
+                statement.setString(1, key);
+                statement.setString(2, value);
+                statement.setInt(3, type);
+                statement.executeUpdate();
+
+                dictionary.add(record);
+            }
+
+            return record;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+            return new ErrorProperty(e.getSQLState(), e.getMessage());
         }
-
-        record.setValue(value);
-
-        session.saveOrUpdate(record);
-
-        dictionary.add(session
-                .createQuery("from DictionaryRecord where key = :key", Property.class)
-                .setParameter("key", key)
-                .uniqueResult());
-
-        return record;
     }
 
     @Override
     public synchronized Property get(String key) {
-        if (!checker.containsKey(key)) return checker.getResult();
+        int recordPos = checker.containsKey(key);
 
-        return dictionary.get((int) checker.getResult().getId());
+        if (recordPos == -1) return checker.getResult();
+
+        return dictionary.get(recordPos);
     }
 
     @Override
     public synchronized Property remove(String key) {
-        if (!checker.containsKey(key)) return checker.getResult();
+        int recordPos = checker.containsKey(key);
 
-        Session session = sessionFactory.getCurrentSession();
-        Property record = dictionary.remove((int) checker.getResult().getId());
+        if (recordPos == -1) return checker.getResult();
 
-        session.delete(record);
+        Property record = dictionary.remove(recordPos);
+        String sql = "DELETE FROM public.dictionary WHERE key = ?";
 
-        return record;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, record.getKey());
+            statement.executeUpdate();
+
+            return record;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+            return new ErrorProperty(e.getSQLState(), e.getMessage());
+        }
     }
     //endregion
 
     private void initDictionary() {
-        Session session = sessionFactory.openSession();
-        dictionary = session
-                .createQuery("from DictionaryRecord where type = :type", Property.class)
-                .setParameter("type", type)
-                .getResultList();
+        try (Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public.dictionary " +
+                    "(" +
+                        "id bigint NOT NULL DEFAULT nextval('dictionary_id_seq'::regclass)," +
+                    "    key character varying(255) NOT NULL," +
+                    "    value character varying(255) NOT NULL," +
+                    "    type integer NOT NULL," +
+                    "    CONSTRAINT id PRIMARY KEY (id)," +
+                    "    CONSTRAINT key UNIQUE (key, type)" +
+                    ")");
+
+            try (ResultSet set = statement.executeQuery("SELECT * FROM public.dictionary WHERE type = " + type)) {
+                dictionary = new LinkedList<>();
+
+                while (set.next()) {
+                    Property record = new DictionaryRecord();
+                    record.setId(set.getLong(0));
+                    record.setKey(set.getString(1));
+                    record.setValue(set.getString(2));
+                    record.setType(set.getInt(3));
+
+                    dictionary.add(record);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
