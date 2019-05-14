@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class ConsoleMenu implements Menu {
     private Dictionary[] dictionaries;
-    private boolean interrupt = false;
 
     public ConsoleMenu(Dictionary... dictionaries) {
         this.dictionaries = dictionaries;
@@ -23,18 +22,25 @@ public class ConsoleMenu implements Menu {
                     clearConsole();
 
                     System.out.println("Select controller:");
+
                     printDictionariesList();
+
                     System.out.println("exit-Exit");
 
                     if (scanner.hasNextInt()) {
                         index = scanner.nextInt();
 
-                        if (index < 0) System.out.println("Number can not be less than zero!");
-                        else if (index > dictionaries.length) System.out.println("Number can not be greater than count of dictionaries!");
-                        else loopFlag = false;
-                    } else if (scanner.nextLine().equals("exit")){
-                        interrupt = true;
-                        loopFlag = false;
+                        if (index < 0) {
+                            System.out.println("Number can not be less than zero!");
+                        } else if (index > dictionaries.length) {
+                            System.out.println("Number can not be greater than count of dictionaries!");
+                        } else {
+                            loopFlag = false;
+
+                            continue;
+                        }
+                    } else if (scanner.nextLine().equals("exit")) {
+                        return;
                     } else {
                         System.out.println("Invalid command!");
                     }
@@ -43,13 +49,13 @@ public class ConsoleMenu implements Menu {
                     scanner.nextLine();
                 }
 
-                if (interrupt) break;
+                Dictionary dictionary = dictionaries[index];
+                String command;
+                loopFlag = true;
 
-                Dictionary currentFileProperties = dictionaries[index];
-                String command = "";
-
-                while (!command.equals("exit")) {
+                while (loopFlag) {
                     clearConsole();
+
                     System.out.println("Select command:");
                     System.out.println("1-Print");
                     System.out.println("2-Remove");
@@ -61,38 +67,49 @@ public class ConsoleMenu implements Menu {
 
                     switch (command) {
                         case "1":
-                            printDictionary(currentFileProperties);
+                            printDictionary(dictionary);
+
                             break;
 
                         case "2": {
                             System.out.println("Enter key:");
+
                             String key = scanner.nextLine();
-                            removeValue(currentFileProperties, key);
+
+                            removeValue(dictionary, key);
 
                             break;
                         }
 
                         case "3": {
                             System.out.println("Enter key:");
+
                             String key = scanner.nextLine();
-                            getValue(currentFileProperties, key);
+
+                            getValue(dictionary, key);
 
                             break;
                         }
 
                         case "4": {
                             System.out.println("Enter key:");
+
                             String key = scanner.nextLine();
 
                             System.out.println("Enter value:");
+
                             String value = scanner.nextLine();
-                            putValue(currentFileProperties, key, value);
+
+                            putValue(dictionary, key, value);
 
                             break;
                         }
 
-                        case "exit":
-                            break;
+                        case "exit": {
+                            loopFlag = false;
+
+                            continue;
+                        }
 
                         default:
                             System.out.println("Invalid command!");
