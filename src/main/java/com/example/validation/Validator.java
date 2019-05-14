@@ -1,6 +1,8 @@
-package com.example.model;
+package com.example.validation;
 
-public interface Checker {
+import com.example.model.Property;
+
+public interface Validator {
     Property getResult();
 
     boolean isValidKey(String key);

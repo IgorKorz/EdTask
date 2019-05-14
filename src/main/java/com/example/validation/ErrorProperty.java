@@ -1,4 +1,6 @@
-package com.example.model;
+package com.example.validation;
+
+import com.example.model.Property;
 
 public class ErrorProperty implements Property {
     private String error;
@@ -8,7 +10,7 @@ public class ErrorProperty implements Property {
         this.error = error;
         this.message = message;
     }
-    public ErrorProperty(Error error) {
+    public ErrorProperty(DictionaryError error) {
         this.error = error.getError();
         this.message = error.getMessage();
     }

@@ -1,7 +1,7 @@
-package com.example.model;
+package com.example.validation;
 
-public enum Error {
-    Empty("Error", "Empty result!"),
+public enum DictionaryError {
+    Empty("DictionaryError", "Empty result!"),
     EmptyKey("Invalid key", "Empty key!"),
     EmptyValue("Invalid value", "Empty value!"),
     KeyTooLong("Invalid key", "Key too long!"),
@@ -12,7 +12,7 @@ public enum Error {
     private String error;
     private String message;
 
-    Error(String error, String message) {
+    DictionaryError(String error, String message) {
         this.error = error;
         this.message = message;
     }

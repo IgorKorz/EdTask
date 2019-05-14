@@ -1,18 +1,20 @@
-package com.example.model;
+package com.example.validation;
+
+import com.example.model.Property;
 
 import java.util.List;
 
-public class ValidChecker implements Checker {
+public class DictionaryValidator implements Validator {
     private List<Property> dictionary;
     private int keyLength;
     private String keyRegex;
     private Property result;
 
-    public ValidChecker(List<Property> dictionary, int keyLength, String keyRegex) {
+    public DictionaryValidator(List<Property> dictionary, int keyLength, String keyRegex) {
         this.dictionary = dictionary;
         this.keyLength = keyLength;
         this.keyRegex = keyRegex;
-        this.result = new ErrorProperty(Error.Empty);
+        this.result = new ErrorProperty(DictionaryError.Empty);
     }
 
     @Override
@@ -23,25 +25,25 @@ public class ValidChecker implements Checker {
     @Override
     public boolean isValidKey(String key) {
         if (isEmpty(key)) {
-            result = new ErrorProperty(Error.EmptyKey);
+            result = new ErrorProperty(DictionaryError.EmptyKey);
 
             return false;
         }
 
         if (key.length() > keyLength) {
-            result = new ErrorProperty(Error.KeyTooLong);
+            result = new ErrorProperty(DictionaryError.KeyTooLong);
             result.setValue(result.getValue() + " (length = " + keyLength + ")");
 
             return false;
         } else if (key.length() < keyLength) {
-            result = new ErrorProperty(Error.KeyTooShort);
+            result = new ErrorProperty(DictionaryError.KeyTooShort);
             result.setValue(result.getValue() + " (length = " + keyLength + ")");
 
             return false;
         }
 
         if (!key.matches(keyRegex)) {
-            result = new ErrorProperty(Error.KeyNotMatch);
+            result = new ErrorProperty(DictionaryError.KeyNotMatch);
             result.setValue(result.getValue() + " (pattern = " + keyRegex + ")");
 
             return false;
@@ -53,7 +55,7 @@ public class ValidChecker implements Checker {
     @Override
     public boolean isValidValue(String value) {
         if (isEmpty(value)) {
-            result = new ErrorProperty(Error.EmptyValue);
+            result = new ErrorProperty(DictionaryError.EmptyValue);
 
             return false;
         }
@@ -69,7 +71,7 @@ public class ValidChecker implements Checker {
             }
         }
 
-        result = new ErrorProperty(Error.RecordNotFound);
+        result = new ErrorProperty(DictionaryError.RecordNotFound);
 
         return -1;
     }
