@@ -1,6 +1,9 @@
 package com.example.controller;
 
 import com.example.model.*;
+import com.example.validation.DictionaryValidator;
+import com.example.validation.ErrorProperty;
+import com.example.validation.Validator;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -10,21 +13,21 @@ import java.util.Collections;
 import java.util.List;
 
 @Transactional
-public class DBProperties implements Dictionary {
+public class DBDictionary implements Dictionary {
     private DataSource dataSource;
-    private Checker checker;
+    private Validator validator;
     private String name;
     private int type;
     private List<Property> dictionary;
 
-    public DBProperties(DataSource dataSource, int keyLength, String keySymbols, String name, int type) {
+    public DBDictionary(DataSource dataSource, int keyLength, String keySymbols, String name, int type) {
         this.dataSource = dataSource;
         this.name = name;
         this.type = type;
 
         initDictionary();
 
-        this.checker = new ValidChecker(dictionary, keyLength, keySymbols);
+        this.validator = new DictionaryValidator(dictionary, keyLength, keySymbols);
     }
 
     //region override
@@ -40,11 +43,11 @@ public class DBProperties implements Dictionary {
 
     @Override
     public synchronized Property put(String key, String value) {
-        if (!checker.isValidKey(key)) return checker.getResult();
+        if (!validator.isValidKey(key)) return validator.getResult();
 
-        if (!checker.isValidValue(value)) return checker.getResult();
+        if (!validator.isValidValue(value)) return validator.getResult();
 
-        int recordPos = checker.containsKey(key);
+        int recordPos = validator.containsKey(key);
         String sql = recordPos > -1
                 ? "UPDATE dictionary SET value = ? WHERE id = ?"
                 : "INSERT INTO dictionary (key, value, type) VALUES (?, ?, ?);" +
@@ -82,18 +85,18 @@ public class DBProperties implements Dictionary {
 
     @Override
     public synchronized Property get(String key) {
-        int recordPos = checker.containsKey(key);
+        int recordPos = validator.containsKey(key);
 
-        if (recordPos == -1) return checker.getResult();
+        if (recordPos == -1) return validator.getResult();
 
         return dictionary.get(recordPos);
     }
 
     @Override
     public synchronized Property remove(String key) {
-        int recordPos = checker.containsKey(key);
+        int recordPos = validator.containsKey(key);
 
-        if (recordPos == -1) return checker.getResult();
+        if (recordPos == -1) return validator.getResult();
 
         Property record = dictionary.remove(recordPos);
         String sql = "DELETE FROM public.dictionary WHERE key = ?";

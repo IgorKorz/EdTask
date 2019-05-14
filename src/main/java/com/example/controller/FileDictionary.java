@@ -1,6 +1,8 @@
 package com.example.controller;
 
 import com.example.model.*;
+import com.example.validation.Validator;
+import com.example.validation.DictionaryValidator;
 
 import java.nio.file.Path;
 import java.nio.file.Files;
@@ -13,19 +15,19 @@ import java.util.List;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class FileProperties implements Dictionary {
+public class FileDictionary implements Dictionary {
     private String name;
     private Path source;
     private List<Property> dictionary;
-    private Checker checker;
+    private Validator checker;
 
-    public FileProperties(String filePath, int keyLength, String keySymbols, String name) {
+    public FileDictionary(String filePath, int keyLength, String keySymbols, String name) {
         this.name = name;
 
         initSource(filePath);
         initDictionary();
 
-        this.checker = new ValidChecker(dictionary, keyLength, keySymbols);
+        this.checker = new DictionaryValidator(dictionary, keyLength, keySymbols);
     }
 
     @Override
