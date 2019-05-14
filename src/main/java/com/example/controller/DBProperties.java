@@ -46,19 +46,19 @@ public class DBProperties implements Dictionary {
 
         int recordPos = checker.containsKey(key);
         String sql = recordPos > -1
-                ? "UPDATE public.dictionary SET value = ? WHERE key = ?"
-                : "INSERT INTO public.dictionary (key, value, type) VALUES (?, ?, ?)";
+                ? "UPDATE dictionary SET value = ? WHERE id = ?"
+                : "INSERT INTO dictionary (key, value, type) VALUES (?, ?, ?);" +
+                    "SELECT MAX(id) FROM dictionary";
         Property record;
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-
             if (recordPos > -1) {
                 record = dictionary.get(recordPos);
                 record.setValue(value);
 
                 statement.setString(1, value);
-                statement.setString(2, key);
+                statement.setLong(2, record.getId());
                 statement.executeUpdate();
             } else {
                 record = new DictionaryRecord(key, value, type);
@@ -66,15 +66,16 @@ public class DBProperties implements Dictionary {
                 statement.setString(1, key);
                 statement.setString(2, value);
                 statement.setInt(3, type);
-                statement.executeUpdate();
+
+                ResultSet set = statement.executeQuery();
+
+                record.setId(set.getLong(1));
 
                 dictionary.add(record);
             }
 
             return record;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
             return new ErrorProperty(e.getSQLState(), e.getMessage());
         }
     }
@@ -104,8 +105,6 @@ public class DBProperties implements Dictionary {
 
             return record;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-
             return new ErrorProperty(e.getSQLState(), e.getMessage());
         }
     }
@@ -113,16 +112,17 @@ public class DBProperties implements Dictionary {
 
     private void initDictionary() {
         try (Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public.dictionary " +
-                    "(" +
-                        "id bigint NOT NULL DEFAULT nextval('dictionary_id_seq'::regclass)," +
-                    "    key character varying(255) NOT NULL," +
-                    "    value character varying(255) NOT NULL," +
-                    "    type integer NOT NULL," +
-                    "    CONSTRAINT id PRIMARY KEY (id)," +
-                    "    CONSTRAINT key UNIQUE (key, type)" +
-                    ")");
+             Statement statement = connection.createStatement()) {
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS public.dictionary " +
+                            "(" +
+                            "id bigint NOT NULL DEFAULT nextval('dictionary_id_seq'::regclass)," +
+                            "    key character varying(255) NOT NULL," +
+                            "    value character varying(255) NOT NULL," +
+                            "    type integer NOT NULL," +
+                            "    CONSTRAINT id PRIMARY KEY (id)," +
+                            "    CONSTRAINT key UNIQUE (key, type)" +
+                            ")");
 
             try (ResultSet set = statement.executeQuery("SELECT * FROM public.dictionary WHERE type = " + type)) {
                 dictionary = Collections.synchronizedList(new ArrayList<>());
