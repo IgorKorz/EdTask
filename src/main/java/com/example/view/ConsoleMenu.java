@@ -108,7 +108,7 @@ public class ConsoleMenu implements Menu {
                             break;
                         }
 
-                        case "": break;
+//                        case "": break;
 
                         case "exit": {
                             loopFlag = false;
