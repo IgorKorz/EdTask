@@ -1,7 +1,6 @@
 package com.example.model;
 
 public class DictionaryRecord implements Property {
-    private long id;
     private String key;
     private String value;
     private int type;
@@ -12,16 +11,6 @@ public class DictionaryRecord implements Property {
         this.type = type;
     }
     public DictionaryRecord() { }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
 
     @Override
     public String getKey() {
