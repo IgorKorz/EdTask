@@ -86,13 +86,14 @@ public class DBDictionary implements Dictionary {
 
         if (!validator.recordExists(key, value)) return validator.getResult();
 
-        return jdbcTemplate.query(
+        jdbcTemplate.update(
                 "DELETE FROM value WHERE key_id = get_key_id(?, ?) AND value = ?",
-                recordMap(),
                 key,
                 type,
                 value
-        ).get(0);
+        );
+
+        return new DictionaryRecord(key, value, type);
     }
 
     private void initDictionary() {
