@@ -59,7 +59,7 @@ public class DictionaryValidator implements Validator {
                 type
         ).get(0);
 
-        if (valueExists) {
+        if (!valueExists) {
             result = DictionaryError.RecordNotFound;
 
             return false;
