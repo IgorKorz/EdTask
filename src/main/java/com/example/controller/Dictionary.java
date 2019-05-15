@@ -11,7 +11,7 @@ public interface Dictionary {
 
     List<Property> getDictionary();
 
-    Property get(String key);
+    List<Property> get(String key);
 
-    Property remove(String key);
+    Property remove(String key, String value);
 }

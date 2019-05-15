@@ -3,6 +3,7 @@ package com.example.view;
 import com.example.controller.Dictionary;
 import com.example.model.Property;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu implements Menu {
@@ -36,18 +37,15 @@ public class ConsoleMenu implements Menu {
                             System.out.println("Number can not be greater than count of dictionaries!");
                         } else {
                             loopFlag = false;
-
-                            continue;
                         }
                     } else if (scanner.nextLine().equals("exit")) {
                         return;
                     } else {
                         System.out.println("Invalid command!");
                     }
-
-                    System.out.println("Press Enter");
-                    scanner.nextLine();
                 }
+
+                scanner.nextLine();
 
                 Dictionary dictionary = dictionaries[index];
                 String command;
@@ -56,6 +54,7 @@ public class ConsoleMenu implements Menu {
                 while (loopFlag) {
                     clearConsole();
 
+                    System.out.println(dictionary.getName());
                     System.out.println("Select command:");
                     System.out.println("1-Print");
                     System.out.println("2-Remove");
@@ -76,7 +75,11 @@ public class ConsoleMenu implements Menu {
 
                             String key = scanner.nextLine();
 
-                            removeValue(dictionary, key);
+                            System.out.println("Enter value:");
+
+                            String value = scanner.nextLine();
+
+                            removeValue(dictionary, key, value);
 
                             break;
                         }
@@ -105,6 +108,8 @@ public class ConsoleMenu implements Menu {
                             break;
                         }
 
+                        case "": break;
+
                         case "exit": {
                             loopFlag = false;
 
@@ -116,6 +121,7 @@ public class ConsoleMenu implements Menu {
                     }
 
                     System.out.println("Press Enter");
+
                     scanner.nextLine();
                 }
             }
@@ -130,7 +136,7 @@ public class ConsoleMenu implements Menu {
     private void putValue(Dictionary dictionary, String key, String value) {
         Property record = dictionary.put(key, value);
 
-        if (record.getId() > -1) {
+        if (record.getType() > -1) {
             System.out.println(record.toString() + " put");
         } else {
             System.out.println(record);
@@ -138,13 +144,14 @@ public class ConsoleMenu implements Menu {
     }
 
     private void getValue(Dictionary dictionary, String key) {
-        System.out.println(dictionary.get(key));
+        for (Property property : dictionary.get(key))
+            System.out.println(property);
     }
 
-    private void removeValue(Dictionary dictionary, String key) {
-        Property record = dictionary.remove(key);
+    private void removeValue(Dictionary dictionary, String key, String value) {
+        Property record = dictionary.remove(key, value);
 
-        if (record.getId() > -1) {
+        if (record.getType() > -1) {
             System.out.println(record.toString() + " removed");
         } else {
             System.out.println(record);
@@ -157,7 +164,7 @@ public class ConsoleMenu implements Menu {
     }
 
     private void clearConsole() {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 5; i++)
             System.out.println();
     }
 }
