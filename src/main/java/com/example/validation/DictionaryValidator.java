@@ -6,17 +6,11 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class DictionaryValidator implements Validator {
     private JdbcTemplate jdbcTemplate;
-    private int keyLength;
-    private String keyRegex;
-    private int type;
     private DictionaryError result;
+    private final DictionaryError defaultError = DictionaryError.Empty;
 
-    public DictionaryValidator(JdbcTemplate jdbcTemplate, int keyLength, String keyRegex, int type) {
+    public DictionaryValidator(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.keyLength = keyLength;
-        this.keyRegex = keyRegex;
-        this.type = type;
-        this.result = DictionaryError.Empty;
     }
 
     @Override
@@ -25,12 +19,12 @@ public class DictionaryValidator implements Validator {
     }
 
     @Override
-    public boolean isValidRecord(String key, String value) {
-        return isValidKey(key) && isValidValue(value);
+    public boolean isValidRecord(String key, String value, int keyLength, String keyRegex) {
+        return isValidKey(key, keyLength, keyRegex) && isValidValue(value);
     }
 
     @Override
-    public boolean keyExists(String key) {
+    public boolean keyExists(String key, int type) {
         boolean keyExists = jdbcTemplate.query(
                 "SELECT key_exists(?, ?)",
                 boolMap(),
@@ -44,13 +38,13 @@ public class DictionaryValidator implements Validator {
             return false;
         }
 
-        result = DictionaryError.Empty;
+        result = defaultError;
 
         return true;
     }
 
     @Override
-    public boolean recordExists(String key, String value) {
+    public boolean recordExists(String key, String value, int type) {
         boolean valueExists = jdbcTemplate.query(
                 "SELECT record_exists(?, ?, ?)",
                 boolMap(),
@@ -65,7 +59,7 @@ public class DictionaryValidator implements Validator {
             return false;
         }
 
-        result = DictionaryError.Empty;
+        result = defaultError;
 
         return true;
     }
@@ -78,7 +72,7 @@ public class DictionaryValidator implements Validator {
         return (set, row) -> set.getBoolean(1);
     }
 
-    private boolean isValidKey(String key) {
+    private boolean isValidKey(String key, int keyLength, String keyRegex) {
         if (isEmpty(key)) {
             result = DictionaryError.EmptyKey;
 
@@ -101,7 +95,7 @@ public class DictionaryValidator implements Validator {
             return false;
         }
 
-        result = DictionaryError.Empty;
+        result = defaultError;
 
         return true;
     }
@@ -113,7 +107,7 @@ public class DictionaryValidator implements Validator {
             return false;
         }
 
-        result = DictionaryError.Empty;
+        result = defaultError;
 
         return true;
     }
