@@ -1,39 +1,39 @@
 package com.example.controller;
 
-import com.example.model.*;
+import com.example.model.DictionaryRecord;
+import com.example.model.Property;
 import com.example.validation.DictionaryValidator;
-import com.example.validation.ErrorProperty;
 import com.example.validation.Validator;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Transactional
 public class DBDictionary implements Dictionary {
-    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
     private Validator validator;
     private String name;
     private int type;
-    private List<Property> dictionary;
 
-    public DBDictionary(DataSource dataSource, int keyLength, String keySymbols, String name, int type) {
-        this.dataSource = dataSource;
-        this.name = name;
-        this.type = type;
 
-        initDictionary();
+    public DBDictionary(JdbcTemplate jdbcTemplate, int keyLength, String keySymbols, String name, int type) {
+            this.jdbcTemplate = jdbcTemplate;
+            this.name = name;
+            this.type = type;
 
-        this.validator = new DictionaryValidator(dictionary, keyLength, keySymbols);
+            initDictionary();
+
+            this.validator = new DictionaryValidator(jdbcTemplate, keyLength, keySymbols, type);
     }
 
-    //region override
     @Override
     public synchronized List<Property> getDictionary() {
-        return new ArrayList<>(dictionary);
+        return jdbcTemplate.query(
+                "SELECT key, value FROM key k JOIN value v ON k.id = v.key_id WHERE type = ?",
+                recordMap(),
+                type
+        );
     }
 
     @Override
@@ -43,105 +43,118 @@ public class DBDictionary implements Dictionary {
 
     @Override
     public synchronized Property put(String key, String value) {
-        if (!validator.isValidKey(key)) return validator.getResult();
+        if (!validator.isValidRecord(key, value)) return validator.getResult();
 
-        if (!validator.isValidValue(value)) return validator.getResult();
-
-        int recordPos = validator.containsKey(key);
-        String sql = recordPos > -1
-                ? "UPDATE dictionary SET value = ? WHERE id = ?"
-                : "INSERT INTO dictionary (key, value, type) VALUES (?, ?, ?);" +
-                    "SELECT MAX(id) FROM dictionary";
-        Property record;
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            if (recordPos > -1) {
-                record = dictionary.get(recordPos);
-                record.setValue(value);
-
-                statement.setString(1, value);
-                statement.setLong(2, record.getId());
-                statement.executeUpdate();
+        if (validator.keyExists(key)) {
+            if (validator.recordExists(key, value)) {
+                jdbcTemplate.update(
+                        "UPDATE value SET value = ? WHERE key_id = get_key_id(?, ?)",
+                        value,
+                        key,
+                        type
+                );
             } else {
-                record = new DictionaryRecord(key, value, type);
-
-                statement.setString(1, key);
-                statement.setString(2, value);
-                statement.setInt(3, type);
-
-                ResultSet set = statement.executeQuery();
-
-                record.setId(set.getLong(1));
-
-                dictionary.add(record);
+                insertIntoValueTable(key, value);
             }
+        } else {
+            jdbcTemplate.update(
+                    "INSERT INTO key (key, type) VALUES (?, ?)",
+                    key,
+                    type
+            );
 
-            return record;
-        } catch (SQLException e) {
-            return new ErrorProperty(e.getSQLState(), e.getMessage());
+            insertIntoValueTable(key, value);
         }
+
+        return new DictionaryRecord(key, value, type);
     }
 
     @Override
-    public synchronized Property get(String key) {
-        int recordPos = validator.containsKey(key);
+    public synchronized List<Property> get(String key) {
+        if (!validator.keyExists(key)) return Collections.singletonList(validator.getResult());
 
-        if (recordPos == -1) return validator.getResult();
-
-        return dictionary.get(recordPos);
+        return jdbcTemplate.query(
+                "SELECT * FROM key k JOIN value v ON k.id = v.key_id WHERE key = ?",
+                recordMap(),
+                key
+        );
     }
 
     @Override
-    public synchronized Property remove(String key) {
-        int recordPos = validator.containsKey(key);
+    public synchronized Property remove(String key, String value) {
+        if (!validator.keyExists(key)) return validator.getResult();
 
-        if (recordPos == -1) return validator.getResult();
+        if (!validator.recordExists(key, value)) return validator.getResult();
 
-        Property record = dictionary.remove(recordPos);
-        String sql = "DELETE FROM public.dictionary WHERE key = ?";
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, record.getKey());
-            statement.executeUpdate();
-
-            return record;
-        } catch (SQLException e) {
-            return new ErrorProperty(e.getSQLState(), e.getMessage());
-        }
+        return jdbcTemplate.query(
+                "DELETE FROM value WHERE key_id = get_key_id(?, ?) AND value = ?",
+                recordMap(),
+                key,
+                type,
+                value
+        ).get(0);
     }
-    //endregion
 
     private void initDictionary() {
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement()) {
-            statement.executeUpdate(
-                    "CREATE TABLE IF NOT EXISTS public.dictionary " +
-                            "(" +
-                            "id bigint NOT NULL DEFAULT nextval('dictionary_id_seq'::regclass)," +
-                            "    key character varying(255) NOT NULL," +
-                            "    value character varying(255) NOT NULL," +
-                            "    type integer NOT NULL," +
-                            "    CONSTRAINT id PRIMARY KEY (id)," +
-                            "    CONSTRAINT key UNIQUE (key, type)" +
-                            ")");
+        jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS key" +
+                        "(" +
+                        "id BIGSERIAL NOT NULL," +
+                        "key VARCHAR(255) NOT NULL," +
+                        "type INTEGER NOT NULL," +
+                        "CONSTRAINT unique_id PRIMARY KEY (id)," +
+                        "CONSTRAINT dict_key UNIQUE (key, type)" +
+                        ")"
+        );
+        jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS value" +
+                        "(" +
+                        "id BIGSERIAL NOT NULL," +
+                        "value VARCHAR(255) NOT NULL," +
+                        "key_id BIGINT," +
+                        "CONSTRAINT unique_val_id PRIMARY KEY (id)," +
+                        "CONSTRAINT property UNIQUE (key_id, value)," +
+                        "CONSTRAINT key_id FOREIGN KEY (key_id)" +
+                        "   REFERENCES key (id) MATCH SIMPLE" +
+                        "   ON UPDATE NO ACTION" +
+                        "   ON DELETE CASCADE" +
+                        ")"
+        );
+        jdbcTemplate.execute(
+                "CREATE OR REPLACE FUNCTION key_exists(k varchar, t integer) RETURNS boolean AS $$" +
+                        "BEGIN " +
+                        "RETURN EXISTS(SELECT 1 FROM key WHERE key = k AND type = t);" +
+                        "END" +
+                        "$$ LANGUAGE PLPGSQL"
+        );
+        jdbcTemplate.execute(
+                "CREATE OR REPLACE FUNCTION record_exists(k varchar, v varchar, t integer) RETURNS boolean AS $$" +
+                        "BEGIN " +
+                        "RETURN EXISTS(SELECT 1 FROM key JOIN value ON key.id = key_id WHERE key = k AND value = v AND type = t);" +
+                        "END" +
+                        "$$ LANGUAGE PLPGSQL"
+        );
+        jdbcTemplate.execute(
+                "CREATE OR REPLACE FUNCTION get_key_id(k varchar, t integer) RETURNS integer AS $$" +
+                        "BEGIN " +
+                        "RETURN id FROM key WHERE key = k AND type = t;" +
+                        "END" +
+                        "$$ LANGUAGE PLPGSQL"
+        );
+    }
 
-            try (ResultSet set = statement.executeQuery("SELECT * FROM public.dictionary WHERE type = " + type)) {
-                dictionary = Collections.synchronizedList(new ArrayList<>());
+    private RowMapper<Property> recordMap() {
+        return (set, row) -> {
+            Property record = new DictionaryRecord();
+            record.setKey(set.getString("key"));
+            record.setValue(set.getString("value"));
+            record.setType(type);
 
-                while (set.next()) {
-                    Property record = new DictionaryRecord();
-                    record.setId(set.getLong("id"));
-                    record.setKey(set.getString("key"));
-                    record.setValue(set.getString("value"));
-                    record.setType(set.getInt("type"));
+            return record;
+        };
+    }
 
-                    dictionary.add(record);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+    private void insertIntoValueTable(String key, String value) {
+        jdbcTemplate.update("INSERT INTO value (value, key_id) VALUES (?, get_key_id(?, ?))", value, key, type);
     }
 }
