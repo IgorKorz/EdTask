@@ -7,6 +7,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MainClass {
     public static void main(String[] args) {
+        if (args.length == 0) return;
+
         String contextFile;
 
         switch (args[0]) {
