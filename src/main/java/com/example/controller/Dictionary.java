@@ -15,5 +15,5 @@ public interface Dictionary {
 
     Property remove(String key, String value);
 
-    void initDictionary();
+    boolean initialization();
 }
