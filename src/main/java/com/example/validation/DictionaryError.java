@@ -1,17 +1,16 @@
 package com.example.validation;
 
-import com.example.Strings;
 import com.example.model.Property;
 
 public enum DictionaryError {
-    Empty(new ErrorProperty(Strings.dictionaryError, Strings.emptyResult)),
-    EmptyKey(new ErrorProperty(Strings.invalidKey, Strings.emptyKey)),
-    EmptyValue(new ErrorProperty(Strings.invalidValue, Strings.emptyValue)),
-    KeyTooLong(new ErrorProperty(Strings.invalidKey, Strings.keyTooLong)),
-    KeyTooShort(new ErrorProperty(Strings.invalidKey, Strings.keyTooShort)),
-    KeyNotFound(new ErrorProperty(Strings.keyError, Strings.keyNotFound)),
-    KeyNotMatch(new ErrorProperty(Strings.keyError, Strings.keyNotMatch)),
-    RecordNotFound(new ErrorProperty(Strings.recordError, Strings.recordNotFound));
+    Empty(new ErrorProperty(ErrorStrings.DICTIONARY_ERROR, ErrorStrings.EMPTY_RESULT)),
+    EmptyKey(new ErrorProperty(ErrorStrings.INVALID_KEY, ErrorStrings.EMPTY_KEY)),
+    EmptyValue(new ErrorProperty(ErrorStrings.INVALID_VALUE, ErrorStrings.EMPTY_VALUE)),
+    KeyTooLong(new ErrorProperty(ErrorStrings.INVALID_KEY, ErrorStrings.KEY_TOO_LONG)),
+    KeyTooShort(new ErrorProperty(ErrorStrings.INVALID_KEY, ErrorStrings.KEY_TOO_SHORT)),
+    KeyNotFound(new ErrorProperty(ErrorStrings.KEY_ERROR, ErrorStrings.KEY_NOT_FOUND)),
+    KeyNotMatch(new ErrorProperty(ErrorStrings.KEY_ERROR, ErrorStrings.KEY_NOT_MATCH)),
+    RecordNotFound(new ErrorProperty(ErrorStrings.RECORD_ERROR, ErrorStrings.RECORD_NOT_FOUND));
 
     Property error;
 
