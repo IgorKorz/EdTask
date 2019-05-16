@@ -9,7 +9,7 @@ public interface Property {
 
     void setValue(String value);
 
-    int getType();
+    DictionaryType getType();
 
-    void setType(int type);
+    void setType(DictionaryType type);
 }

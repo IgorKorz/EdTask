@@ -1,9 +1,9 @@
 package com.example.view;
 
 import com.example.controller.Dictionary;
+import com.example.model.DictionaryType;
 import com.example.model.Property;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu implements Menu {
@@ -14,115 +14,112 @@ public class ConsoleMenu implements Menu {
     }
 
     public void run() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                int index = -1;
-                boolean loopFlag = true;
+        if (initializationDictionaries()) {
 
-                while (loopFlag) {
-                    clearConsole();
+            try (Scanner scanner = new Scanner(System.in)) {
+                while (true) {
+                    int index = -1;
+                    boolean loopFlag = true;
 
-                    System.out.println("Select controller:");
+                    while (loopFlag) {
+                        clearConsole();
 
-                    printDictionariesList();
+                        System.out.println(MenuMessages.SELECT_DICTIONARY_MSG);
 
-                    System.out.println("exit-Exit");
+                        printDictionariesList();
 
-                    if (scanner.hasNextInt()) {
-                        index = scanner.nextInt();
+                        System.out.println(MenuMessages.EXIT_COMMAND_MSG);
 
-                        if (index < 0) {
-                            System.out.println("Number can not be less than zero!");
-                        } else if (index > dictionaries.length) {
-                            System.out.println("Number can not be greater than count of dictionaries!");
+                        if (scanner.hasNextInt()) {
+                            index = scanner.nextInt();
+
+                            if (index < 0) {
+                                System.out.println(MenuMessages.TOO_SMALL_NUM_MSG);
+                            } else if (index > dictionaries.length) {
+                                System.out.println(MenuMessages.TOO_LARGE_NUM_MSG);
+                            } else {
+                                loopFlag = false;
+                            }
+                        } else if (scanner.nextLine().equals(MenuCommands.EXIT_CMD)) {
+                            return;
                         } else {
-                            loopFlag = false;
+                            System.out.println(MenuMessages.INVALID_COMMAND_MSG);
                         }
-                    } else if (scanner.nextLine().equals("exit")) {
-                        return;
-                    } else {
-                        System.out.println("Invalid command!");
                     }
-                }
-
-                scanner.nextLine();
-
-                Dictionary dictionary = dictionaries[index];
-                String command;
-                loopFlag = true;
-
-                while (loopFlag) {
-                    clearConsole();
-
-                    System.out.println(dictionary.getName());
-                    System.out.println("Select command:");
-                    System.out.println("1-Print");
-                    System.out.println("2-Remove");
-                    System.out.println("3-Get");
-                    System.out.println("4-Put");
-                    System.out.println("exit-Exit");
-
-                    command = scanner.nextLine();
-
-                    switch (command) {
-                        case "1":
-                            printDictionary(dictionary);
-
-                            break;
-
-                        case "2": {
-                            System.out.println("Enter key:");
-
-                            String key = scanner.nextLine();
-
-                            System.out.println("Enter value:");
-
-                            String value = scanner.nextLine();
-
-                            removeValue(dictionary, key, value);
-
-                            break;
-                        }
-
-                        case "3": {
-                            System.out.println("Enter key:");
-
-                            String key = scanner.nextLine();
-
-                            getValue(dictionary, key);
-
-                            break;
-                        }
-
-                        case "4": {
-                            System.out.println("Enter key:");
-
-                            String key = scanner.nextLine();
-
-                            System.out.println("Enter value:");
-
-                            String value = scanner.nextLine();
-
-                            putValue(dictionary, key, value);
-
-                            break;
-                        }
-
-//                        case "": break;
-
-                        case "exit": {
-                            loopFlag = false;
-
-                            continue;
-                        }
-
-                        default:
-                            System.out.println("Invalid command!");
-                    }
-
-                    System.out.println("Press Enter");
 
                     scanner.nextLine();
+
+                    Dictionary dictionary = dictionaries[index];
+                    String command;
+                    loopFlag = true;
+
+                    while (loopFlag) {
+                        clearConsole();
+
+                        System.out.println(dictionary.getName());
+                        System.out.println(MenuMessages.SELECT_COMMAND_MSG);
+
+                        command = scanner.nextLine();
+
+                        switch (command) {
+                            case MenuCommands.PRINT_CMD: {
+                                printDictionary(dictionary);
+
+                                break;
+                            }
+
+                            case MenuCommands.PUT_CMD: {
+                                System.out.println(MenuMessages.ENTER_KEY_MSG);
+
+                                String key = scanner.nextLine();
+
+                                System.out.println(MenuMessages.ENTER_VALUE_MSG);
+
+                                String value = scanner.nextLine();
+
+                                putValue(dictionary, key, value);
+
+                                break;
+                            }
+
+                            case MenuCommands.GET_CMD: {
+                                System.out.println(MenuMessages.ENTER_KEY_MSG);
+
+                                String key = scanner.nextLine();
+
+                                getValue(dictionary, key);
+
+                                break;
+                            }
+
+                            case MenuCommands.REMOVE_CMD: {
+                                System.out.println(MenuMessages.ENTER_KEY_MSG);
+
+                                String key = scanner.nextLine();
+
+                                System.out.println(MenuMessages.ENTER_VALUE_MSG);
+
+                                String value = scanner.nextLine();
+
+                                removeValue(dictionary, key, value);
+
+                                break;
+                            }
+
+                            case MenuCommands.EXIT_CMD: {
+                                loopFlag = false;
+
+                                continue;
+                            }
+
+                            default:
+                                System.out.println(MenuMessages.INVALID_COMMAND_MSG);
+                        }
+
+                        System.out.println(MenuMessages.PRESS_ENTER_MSG);
+
+                        scanner.nextLine();
+                    }
                 }
             }
         }
@@ -136,8 +133,8 @@ public class ConsoleMenu implements Menu {
     private void putValue(Dictionary dictionary, String key, String value) {
         Property record = dictionary.put(key, value);
 
-        if (record.getType() > -1) {
-            System.out.println(record.toString() + " put");
+        if (record.getType() != DictionaryType.ERROR) {
+            System.out.printf(MenuMessages.PUT_MSG_PATTERN, record.toString());
         } else {
             System.out.println(record);
         }
@@ -151,8 +148,8 @@ public class ConsoleMenu implements Menu {
     private void removeValue(Dictionary dictionary, String key, String value) {
         Property record = dictionary.remove(key, value);
 
-        if (record.getType() > -1) {
-            System.out.println(record.toString() + " removed");
+        if (record.getType() != DictionaryType.ERROR) {
+            System.out.printf(MenuMessages.REMOVED_MSG_PATTERN, record.toString());
         } else {
             System.out.println(record);
         }
@@ -160,11 +157,21 @@ public class ConsoleMenu implements Menu {
 
     private void printDictionariesList() {
         for (int i = 0; i < dictionaries.length; i++)
-            System.out.println(i + "-" + dictionaries[i].getName());
+            System.out.printf(MenuMessages.PRINT_DICTIONARIES_LIST_MSG_PATTERN, i, dictionaries[i].getName());
     }
 
     private void clearConsole() {
         for (int i = 0; i < 5; i++)
             System.out.println();
+    }
+
+    private boolean initializationDictionaries() {
+        if (!dictionaries[0].initialization()) {
+            System.out.println(MenuMessages.NOT_BEEN_INITIALIZED);
+
+            return false;
+        }
+
+        return true;
     }
 }

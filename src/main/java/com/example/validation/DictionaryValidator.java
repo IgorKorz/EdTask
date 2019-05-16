@@ -1,5 +1,6 @@
 package com.example.validation;
 
+import com.example.model.DictionaryType;
 import com.example.model.Property;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -8,6 +9,9 @@ public class DictionaryValidator implements Validator {
     private JdbcTemplate jdbcTemplate;
     private DictionaryError result;
     private final DictionaryError defaultError = DictionaryError.Empty;
+
+    private final String keyExistsQuery = "SELECT key_exists(?, ?)";
+    private final String recordExistsQuery = "SELECT record_exists(?, ?, ?)";
 
     public DictionaryValidator(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -24,12 +28,12 @@ public class DictionaryValidator implements Validator {
     }
 
     @Override
-    public boolean keyExists(String key, int type) {
+    public boolean keyExists(String key, DictionaryType type) {
         boolean keyExists = jdbcTemplate.query(
-                "SELECT key_exists(?, ?)",
+                keyExistsQuery,
                 boolMap(),
                 key,
-                type
+                type.getType()
         ).get(0);
 
         if (!keyExists) {
@@ -44,13 +48,13 @@ public class DictionaryValidator implements Validator {
     }
 
     @Override
-    public boolean recordExists(String key, String value, int type) {
+    public boolean recordExists(String key, String value, DictionaryType type) {
         boolean valueExists = jdbcTemplate.query(
-                "SELECT record_exists(?, ?, ?)",
+                recordExistsQuery,
                 boolMap(),
                 key,
                 value,
-                type
+                type.getType()
         ).get(0);
 
         if (!valueExists) {
@@ -79,18 +83,18 @@ public class DictionaryValidator implements Validator {
             return false;
         }
 
+        if (!key.matches(keyRegex)) {
+            result = DictionaryError.KeyNotMatch;
+
+            return false;
+        }
+
         if (key.length() > keyLength) {
             result = DictionaryError.KeyTooLong;
 
             return false;
         } else if (key.length() < keyLength) {
             result = DictionaryError.KeyTooShort;
-
-            return false;
-        }
-
-        if (!key.matches(keyRegex)) {
-            result = DictionaryError.KeyNotMatch;
 
             return false;
         }

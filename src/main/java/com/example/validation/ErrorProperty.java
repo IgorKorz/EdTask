@@ -1,5 +1,6 @@
 package com.example.validation;
 
+import com.example.model.DictionaryType;
 import com.example.model.Property;
 
 public class ErrorProperty implements Property {
@@ -36,12 +37,12 @@ public class ErrorProperty implements Property {
     }
 
     @Override
-    public int getType() {
-        return -1;
+    public DictionaryType getType() {
+        return DictionaryType.ERROR;
     }
 
     @Override
-    public void setType(int type) {
+    public void setType(DictionaryType type) {
 
     }
 

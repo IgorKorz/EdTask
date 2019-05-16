@@ -3,9 +3,9 @@ package com.example.model;
 public class DictionaryRecord implements Property {
     private String key;
     private String value;
-    private int type;
+    private DictionaryType type;
 
-    public DictionaryRecord(String key, String value, int type) {
+    public DictionaryRecord(String key, String value, DictionaryType type) {
         this.key = key;
         this.value = value;
         this.type = type;
@@ -33,12 +33,12 @@ public class DictionaryRecord implements Property {
     }
 
     @Override
-    public int getType() {
+    public DictionaryType getType() {
         return type;
     }
 
     @Override
-    public void setType(int type) {
+    public void setType(DictionaryType type) {
         this.type = type;
     }
 

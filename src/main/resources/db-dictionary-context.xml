@@ -29,7 +29,7 @@
         <constructor-arg index="2" value="4"/>
         <constructor-arg index="3" value="[a-zA-Z]+"/>
         <constructor-arg index="4" value="Word Dictionary"/>
-        <constructor-arg index="5" value="0"/>
+        <constructor-arg index="5" value="LETTERS"/>
     </bean>
 
     <bean id="numberDictionary" class="com.example.controller.DBDictionary">
@@ -38,7 +38,7 @@
         <constructor-arg index="2" value="5"/>
         <constructor-arg index="3" value="[0-9]+"/>
         <constructor-arg index="4" value="Number Dictionary"/>
-        <constructor-arg index="5" value="1"/>
+        <constructor-arg index="5" value="NUMBERS"/>
     </bean>
 
     <bean id="menu" class="com.example.view.ConsoleMenu">
